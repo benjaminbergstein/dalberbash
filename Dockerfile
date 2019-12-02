@@ -7,4 +7,5 @@ RUN yarn
 
 ADD . /app
 
-CMD ["yarn", "start"]
+ENTRYPOINT ["yarn"]
+CMD ["start"]

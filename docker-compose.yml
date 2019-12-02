@@ -9,7 +9,17 @@ services:
          - webrtc-learning
          - haproxy-controller_haproxy-controller
 
-   routeservice:
+   server:
+      image: benbergstein/webrtc-learning:latest
+      ports:
+         - 3001:3001
+      command: ["server"]
+      volumes:
+         - .:/app
+      networks:
+         - webrtc-learning
+
+   client:
       image: benbergstein/webrtc-learning:latest
       ports:
          - 3000:3000

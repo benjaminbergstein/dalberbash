@@ -1,0 +1,86 @@
+import React, { useState } from 'react';
+import {
+  createGame,
+  joinGame,
+  fetchGames,
+} from './game';
+
+const CreateGame = ({ game, setGame }) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const updatedGame = {
+      ...game,
+      turnPlayer: 1,
+      round: {
+        state: 'awaiting_prompt',
+        prompt: undefined,
+        answers: {},
+      },
+      state: 'waiting',
+    };
+    createGame(updatedGame).then(() => {
+      setGame(updatedGame);
+    });
+  };
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <input
+          autofocus="autofocus"
+          type="text"
+          onChange={(e) => setGame({
+            ...game,
+            players: 1,
+            currentPlayer: 1,
+            name: e.target.value
+          })}
+        />
+        <button>Create Game</button>
+      </form>
+    </div>
+  )
+};
+
+const GameList = ({ games, setGame }) => {
+  const handleClick = (name, game) => () => {
+    joinGame(name, game).then((serverGame) => {
+      setGame(serverGame);
+    });
+  };
+
+  return (
+    <div>
+      {Object.entries(games).map(([name, game]) => (
+        <div>
+          {name}
+          <button onClick={handleClick(name, game)}>Join</button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const StartScreen = (props) => {
+  const [games, setGames] = useState({});
+  const anyGames = Object.keys(games).length !== 0;
+
+  setTimeout(() => {
+    if (!anyGames) {
+      fetchGames().then((res) => {
+        setGames(res);
+      });
+    }
+  }, 500);
+
+  return (
+    <div>
+      <CreateGame {...props} />
+      {anyGames && (
+        <GameList games={games} {...props} />
+      )}
+    </div>
+  );
+};
+
+export default StartScreen;
