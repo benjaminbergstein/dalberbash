@@ -17,7 +17,7 @@ const Scoring = ({ game }) => {
     if (isTurnPlayer(player)) {
       return votesFor(player) === 0 ? 2 : 0
     } else {
-      const correctAnswer = votes[player] === turnPlayer;
+      const correctAnswer = parseInt(votes[player]) === turnPlayer;
       return (correctAnswer ? 2 : 0) + votesFor(player);
     }
   };
