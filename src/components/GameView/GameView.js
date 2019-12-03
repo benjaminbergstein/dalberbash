@@ -4,7 +4,7 @@ import {
   watchGame,
   submitAnswer,
   submitVote,
-} from './game';
+} from '../../game';
 
 function shuffle(a) {
   for (let i = a.length - 1; i > 0; i--) {

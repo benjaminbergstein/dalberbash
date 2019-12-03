@@ -2,9 +2,9 @@ import React from 'react';
 import {
   watchGame,
   startGame,
-} from './game';
+} from '../game';
 
-const WaitingScreen = ({ game, setGame }) => {
+const PreGameView = ({ game, setGame }) => {
   const {
     currentPlayer,
     players,
@@ -28,4 +28,4 @@ const WaitingScreen = ({ game, setGame }) => {
   )
 };
 
-export default WaitingScreen;
+export default PreGameView;

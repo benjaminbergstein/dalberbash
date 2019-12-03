@@ -3,7 +3,7 @@ import {
   createGame,
   joinGame,
   fetchGames,
-} from './game';
+} from '../../game';
 
 const CreateGame = ({ game, setGame }) => {
   const handleSubmit = (e) => {
@@ -67,7 +67,7 @@ const GameList = ({ games, setGame }) => {
   );
 };
 
-const StartScreen = (props) => {
+const StartView = (props) => {
   const [games, setGames] = useState({});
   const anyGames = Object.keys(games).length !== 0;
 
@@ -89,4 +89,4 @@ const StartScreen = (props) => {
   );
 };
 
-export default StartScreen;
+export default StartView;
