@@ -5,7 +5,7 @@ import AwaitingPrompt from './AwaitingPrompt';
 import CollectAnswers from './CollectAnswers';
 import Voting from './Voting';
 import Scoring from './Scoring';
-import { watchGame } from '../../game';
+import withWatchGame from '../../containers/withWatchGame';
 
 const ROUND_COMPONENTS = {
   awaiting_prompt: AwaitingPrompt,
@@ -14,13 +14,11 @@ const ROUND_COMPONENTS = {
   scoring: Scoring,
 };
 
-const ConditionalComponent = (condition) => ({ children }) => {
-  if (!condition) return null;
-  return (<>{children}</>);
-};
+const ConditionalComponent = (condition) => ({ children }) => (condition && children);
 
 const GameView = ({ game, setGame }) => {
   const {
+    name,
     currentPlayer,
     turnPlayer,
     round,
@@ -28,11 +26,10 @@ const GameView = ({ game, setGame }) => {
 
   const isMyTurn = turnPlayer === currentPlayer;
   const Component = ROUND_COMPONENTS[round.state];
-  watchGame(game, setGame);
 
   return (
     <div>
-      <h1>{game.name}</h1>
+      <h1>{name}</h1>
       <div>You are player {currentPlayer}</div>
       <Component
         game={game}
@@ -45,4 +42,4 @@ const GameView = ({ game, setGame }) => {
   );
 };
 
-export default GameView;
+export default withWatchGame(GameView);

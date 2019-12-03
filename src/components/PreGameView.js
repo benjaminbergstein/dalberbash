@@ -1,20 +1,15 @@
 import React from 'react';
-import {
-  watchGame,
-  startGame,
-} from '../game';
+import withWatchGame from '../containers/withWatchGame';
+import { startGame } from '../game';
 
-const PreGameView = ({ game, setGame }) => {
+const PreGameView = ({ game }) => {
   const {
     currentPlayer,
     players,
     name,
   } = game;
 
-  const handleClick = () => {
-    startGame(name)
-  };
-  watchGame(game, setGame);
+  const handleClick = () => startGame(name);
 
   return (
     <div>
@@ -28,4 +23,4 @@ const PreGameView = ({ game, setGame }) => {
   )
 };
 
-export default PreGameView;
+export default withWatchGame(PreGameView);

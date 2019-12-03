@@ -19,6 +19,17 @@ const createGame = ({ name, ...game }) => fetch(`${HOST}/games/${name}`, {
   body: JSON.stringify(game),
 });
 const updateGame = createGame;
+const updateRound = (game, round, updates) => {
+  const updatedGame = {
+    ...game,
+    round: {
+      ...round,
+      ...updates
+    },
+  };
+
+  updateGame(updatedGame);
+}
 
 const joinGame = (name) => fetch(`${HOST}/join`, {
   method: 'post',
@@ -52,32 +63,15 @@ const submitVote = (name, player, vote) => fetch(`${HOST}/vote`, {
   body: JSON.stringify({ name, player, vote }),
 });
 
-const watchGame = (game, setGame) => {
-  const {
-    currentPlayer,
-    players,
-    name,
-  } = game;
-
-  setTimeout(() => {
-    fetchGame(name).then((updatedGame) => {
-      setGame({
-        ...updatedGame,
-        currentPlayer,
-      })
-    });
-  }, 1000);
-};
-
 export {
   DEFAULT_GAME,
   createGame,
   updateGame,
+  updateRound,
   fetchGame,
   fetchGames,
   joinGame,
   startGame,
   submitAnswer,
   submitVote,
-  watchGame,
 }

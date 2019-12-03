@@ -10,7 +10,7 @@ const CollectionForm = ({ prompt, field, setField, handleSubmit }) => {
     <div>
       <div>{prompt}</div>
       <form onSubmit={onSubmit}>
-        <textarea onChange={(e) => setField(e.target.value)}>{field}</textarea>
+        <textarea onChange={(e) => { setField(e.target.value); }} value={field} />
         <button>Submit</button>
       </form>
     </div>

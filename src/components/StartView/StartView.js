@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, {
+  useState,
+  useEffect,
+} from 'react';
 import {
   createGame,
   joinGame,
@@ -71,13 +74,14 @@ const StartView = (props) => {
   const [games, setGames] = useState({});
   const anyGames = Object.keys(games).length !== 0;
 
-  setTimeout(() => {
-    if (!anyGames) {
-      fetchGames().then((res) => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!anyGames) fetchGames().then((res) => {
         setGames(res);
       });
-    }
-  }, 500);
+    }, 1000);
+    return () => { clearInterval(interval); };
+  });
 
   return (
     <div>

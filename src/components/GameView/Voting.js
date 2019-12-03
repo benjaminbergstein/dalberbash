@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  updateGame,
+  updateRound,
   submitVote,
 } from '../../game';
 
@@ -17,13 +17,7 @@ const Voting = ({
   const everyoneVoted = voteCount === players - 1;
 
   const handleClick = () => {
-    updateGame({
-      ...game,
-      round: {
-        ...round,
-        state: 'scoring',
-      },
-    })
+    updateRound(game, round, { state: 'scoring' });
   };
 
   return (

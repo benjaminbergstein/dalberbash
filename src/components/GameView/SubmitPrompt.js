@@ -1,22 +1,15 @@
 import React, { useState } from 'react';
 import CollectionForm from './CollectionForm';
-import {
-  updateGame,
-} from '../../game';
+import { updateRound } from '../../game';
 
 const SubmitPrompt = ({ game, setGame }) => {
   const [prompt, setPrompt] = useState('');
   const { round } = game;
   const handleSubmit = () => {
-    const updatedGame = {
-      ...game,
-      round: {
-        ...round,
-        prompt,
-        state: 'awaiting_answers',
-      },
-    };
-    updateGame(updatedGame);
+    updateRound(game, round, {
+      prompt,
+      state: 'awaiting_answers',
+    });
   };
 
   return (
