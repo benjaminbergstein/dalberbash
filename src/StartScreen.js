@@ -18,9 +18,13 @@ const CreateGame = ({ game, setGame }) => {
       },
       state: 'waiting',
     };
-    createGame(updatedGame).then(() => {
-      setGame(updatedGame);
-    });
+    createGame(updatedGame)
+      .then(() => {
+        const { name, currentPlayer } = updatedGame;
+        window.location.hash = `${name}.${currentPlayer}`;
+        setGame(updatedGame);
+      })
+      .catch(() => {});
   };
 
   return (
@@ -45,6 +49,8 @@ const CreateGame = ({ game, setGame }) => {
 const GameList = ({ games, setGame }) => {
   const handleClick = (name, game) => () => {
     joinGame(name, game).then((serverGame) => {
+      const { name, currentPlayer } = serverGame;
+      window.location.hash = `${name}.${currentPlayer}`;
       setGame(serverGame);
     });
   };

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { DEFAULT_GAME } from './game';
 import StartScreen from './StartScreen';
 import WaitingScreen from './WaitingScreen';
 import PlayingScreen from './PlayingScreen';
@@ -10,8 +9,8 @@ const COMPONENT_MAP = {
   playing: PlayingScreen,
 };
 
-const App = () => {
-  const [game, setGame] = useState(DEFAULT_GAME);
+const App = ({ initialGame }) => {
+  const [game, setGame] = useState(initialGame);
   const Component = COMPONENT_MAP[game.state];
   return <Component game={game} setGame={setGame} />;
 };

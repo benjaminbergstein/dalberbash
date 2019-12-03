@@ -16,8 +16,14 @@ app.get('/games', (req, res) => {
 
 app.get(/\/games/, (req, res) => {
   const gameId = req.path.match(EXTRACT_GAME_ID)[1];
+  const game = games[gameId];
 
-  res.send(games[gameId]);
+  if (game) {
+    res.send(game);
+    return;
+  }
+
+  res.sendStatus(404);
 });
 
 app.post(/\/start/, (req, res) => {
@@ -31,8 +37,42 @@ app.post(/\/start/, (req, res) => {
   res.send('ok');
 });
 
+app.post(/\/vote/, (req, res) => {
+  const { name, player, vote } = req.body;
+  const game = games[name];
+  const { round } = game;
+  const { votes } = round;
+  const updatedGame = {
+    ...game,
+    round: {
+      ...round,
+      votes: {
+        ...votes,
+        [player]: vote,
+      },
+    },
+  };
+  games[name] = updatedGame;
+  res.send('ok');
+});
+
 app.post(/\/answer/, (req, res) => {
   const { name, player, answer } = req.body;
+  const game = games[name];
+  const { round } = game;
+  const { answers } = round;
+  const updatedGame = {
+    ...game,
+    round: {
+      ...round,
+      answers: {
+        ...answers,
+        [player]: answer,
+      },
+    },
+  };
+  games[name] = updatedGame;
+  res.send('ok');
 });
 
 app.post(/\/join/, (req, res) => {

@@ -42,7 +42,15 @@ const submitAnswer = (name, player, answer) => fetch(`${HOST}/answer`, {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({ name, player, answer }),
-}
+});
+
+const submitVote = (name, player, vote) => fetch(`${HOST}/vote`, {
+  method: 'post',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ name, player, vote }),
+});
 
 const watchGame = (game, setGame) => {
   const {
@@ -58,7 +66,7 @@ const watchGame = (game, setGame) => {
         currentPlayer,
       })
     });
-  }, 500);
+  }, 1000);
 };
 
 export {
@@ -70,5 +78,6 @@ export {
   joinGame,
   startGame,
   submitAnswer,
+  submitVote,
   watchGame,
 }
