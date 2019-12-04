@@ -7,6 +7,7 @@ import Input from '../Input';
 import TextBox from '../TextBox';
 import Button from '../Button';
 import {
+  DEFAULT_ROUND,
   createGame,
   joinGame,
   fetchGames,
@@ -18,11 +19,8 @@ const CreateGame = ({ game, setGame }) => {
     const updatedGame = {
       ...game,
       turnPlayer: 1,
-      round: {
-        state: 'awaiting_prompt',
-        prompt: undefined,
-        answers: {},
-      },
+      round: DEFAULT_ROUND,
+      roundTallies: [],
       state: 'waiting',
     };
     createGame(updatedGame)
@@ -78,7 +76,7 @@ const StartView = (props) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!anyGames) fetchGames().then((res) => {
+      fetchGames().then((res) => {
         setGames(res);
       });
     }, 1000);

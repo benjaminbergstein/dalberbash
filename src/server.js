@@ -11,7 +11,11 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.get('/games', (req, res) => {
-  res.send(games);
+  res.send(Object.entries(games).reduce((g, [name, game]) => {
+    const { state } = game;
+    if (state === 'waiting') return { ...g, [name]: game }
+    return g;
+  }, {}));
 });
 
 app.get(/\/games/, (req, res) => {

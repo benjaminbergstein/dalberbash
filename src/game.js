@@ -8,6 +8,12 @@ const DEFAULT_GAME = {
   state: 'not_joined',
 };
 
+const DEFAULT_ROUND = {
+  state: 'awaiting_prompt',
+  prompt: undefined,
+  answers: {},
+};
+
 const fetchGames = () => fetch(`${HOST}/games`).then((res) => res.json());
 const fetchGame = (name) => fetch(`${HOST}/games/${name}`).then((res) => res.json());
 
@@ -65,6 +71,7 @@ const submitVote = (name, player, vote) => fetch(`${HOST}/vote`, {
 
 export {
   DEFAULT_GAME,
+  DEFAULT_ROUND,
   createGame,
   updateGame,
   updateRound,
