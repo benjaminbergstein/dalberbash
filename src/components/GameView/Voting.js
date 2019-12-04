@@ -3,6 +3,8 @@ import {
   updateRound,
   submitVote,
 } from '../../game';
+import Button from '../Button';
+import TextBox from '../TextBox';
 
 const Voting = ({
   game,
@@ -10,6 +12,7 @@ const Voting = ({
   WhenNotMyTurn,
 }) => {
   const [vote, setVote] = useState(-1);
+  const [voteSubmitted, setVoteSubmitted] = useState(false);
   const { name, round, currentPlayer, players } = game;
   const { voteOptions, votes } = round;
 
@@ -20,27 +23,35 @@ const Voting = ({
     updateRound(game, round, { state: 'scoring' });
   };
 
+  const handleVoteSubmit = () => {
+    submitVote(name, currentPlayer, vote);
+    setVoteSubmitted(true);
+  };
+
   return (
     <>
       <WhenMyTurn>
-        <div>Waiting for everyone to vote</div>
-        <div>{voteCount} vote(s)</div>
+        <TextBox theme='gray' text='Waiting for everyone to vote' />
+        <TextBox theme='green' text={`${voteCount} vote(s)`} />
         {everyoneVoted && (
-          <button onClick={handleClick}>Finish Voting</button>
+          <Button onClick={handleClick} text='End Voting' />
         )}
       </WhenMyTurn>
 
       <WhenNotMyTurn>
+        <TextBox theme='gray' text='Which answer is real?' />
+        {voteSubmitted && (
+          <TextBox theme='green' text='Waiting for other players...' />
+        )}
         <div>
           {voteOptions.map(([player, answer]) => (
-            <div>
-              <label>
-                <input type="radio" checked={vote === player} onChange={() => setVote(player)} />
-                {answer}
-              </label>
-            </div>
+            <Button
+              theme={vote === player ? 'green' : 'lightgray'}
+              onClick={() => setVote(player)}
+              text={answer}
+            />
           ))}
-          <button onClick={() => submitVote(name, currentPlayer, vote)}>Submit</button>
+          <Button onClick={handleVoteSubmit} text='Submit' />
         </div>
       </WhenNotMyTurn>
     </>

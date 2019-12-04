@@ -2,6 +2,10 @@ import React, {
   useState,
   useEffect,
 } from 'react';
+import Container from '../Container';
+import Input from '../Input';
+import TextBox from '../TextBox';
+import Button from '../Button';
 import {
   createGame,
   joinGame,
@@ -33,17 +37,17 @@ const CreateGame = ({ game, setGame }) => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input
-          autofocus="autofocus"
-          type="text"
+        <Input
+          autoFocus={true}
           onChange={(e) => setGame({
             ...game,
             players: 1,
             currentPlayer: 1,
             name: e.target.value
           })}
+          value={game.name}
         />
-        <button>Create Game</button>
+        <Button text='Create Game' />
       </form>
     </div>
   )
@@ -60,11 +64,9 @@ const GameList = ({ games, setGame }) => {
 
   return (
     <div>
+      <TextBox theme='gray' text='Games to Join' marginTop='0.5rem' />
       {Object.entries(games).map(([name, game]) => (
-        <div>
-          {name}
-          <button onClick={handleClick(name, game)}>Join</button>
-        </div>
+        <Button theme='gray' text={name} onClick={handleClick(name, game)} />
       ))}
     </div>
   );
@@ -84,12 +86,15 @@ const StartView = (props) => {
   });
 
   return (
-    <div>
+    <Container
+      title='Dalberbash'
+      subtitle='An online companion to Balderdash'
+    >
       <CreateGame {...props} />
       {anyGames && (
         <GameList games={games} {...props} />
       )}
-    </div>
+    </Container>
   );
 };
 

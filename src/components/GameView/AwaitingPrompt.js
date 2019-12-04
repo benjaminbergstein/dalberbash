@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import TextBox from '../TextBox';
 import SubmitPrompt from './SubmitPrompt';
 
 const AwaitingPrompt = ({
@@ -6,19 +7,16 @@ const AwaitingPrompt = ({
   setGame,
   WhenMyTurn,
   WhenNotMyTurn
-}) => {
-  const { turnPlayer } = game;
-  return (
-    <>
-      <WhenMyTurn>
-        <SubmitPrompt game={game} setGame={setGame} />
-      </WhenMyTurn>
+}) => (
+  <>
+    <WhenMyTurn>
+      <SubmitPrompt game={game} setGame={setGame} />
+    </WhenMyTurn>
 
-      <WhenNotMyTurn>
-        <div>It's player {turnPlayer}'s turn</div>
-      </WhenNotMyTurn>
-    </>
-  );
-};
+    <WhenNotMyTurn>
+      <TextBox theme='gray' text='Waiting for prompt...' />
+    </WhenNotMyTurn>
+  </>
+);
 
 export default AwaitingPrompt;

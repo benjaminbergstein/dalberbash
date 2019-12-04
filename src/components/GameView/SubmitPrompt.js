@@ -13,15 +13,12 @@ const SubmitPrompt = ({ game, setGame }) => {
   };
 
   return (
-    <div>
-      <div>It's your turn</div>
-      <CollectionForm
-        prompt="What's the prompt?"
-        handleSubmit={handleSubmit}
-        field={prompt}
-        setField={setPrompt}
-      />
-    </div>
+    <CollectionForm
+      prompt="What's the prompt?"
+      handleSubmit={handleSubmit}
+      field={prompt}
+      setField={setPrompt}
+    />
   )
 };
 

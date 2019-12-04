@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Container from '../Container';
 import CollectionForm from './CollectionForm';
 import SubmitPrompt from './SubmitPrompt';
 import AwaitingPrompt from './AwaitingPrompt';
@@ -8,10 +9,10 @@ import Scoring from './Scoring';
 import withWatchGame from '../../containers/withWatchGame';
 
 const ROUND_COMPONENTS = {
-  awaiting_prompt: AwaitingPrompt,
-  awaiting_answers: CollectAnswers,
-  voting: Voting,
-  scoring: Scoring,
+  awaiting_prompt: [AwaitingPrompt, 'Choose Prompt'],
+  awaiting_answers: [CollectAnswers, 'Submit Answers'],
+  voting: [Voting, 'Vote'],
+  scoring: [Scoring, 'Point Tally'],
 };
 
 const ConditionalComponent = (condition) => ({ children }) => (condition && children);
@@ -25,12 +26,17 @@ const GameView = ({ game, setGame }) => {
   } = game;
 
   const isMyTurn = turnPlayer === currentPlayer;
-  const Component = ROUND_COMPONENTS[round.state];
+  const [Component, title] = ROUND_COMPONENTS[round.state];
 
   return (
-    <div>
-      <h1>{name}</h1>
-      <div>You are player {currentPlayer}</div>
+    <Container
+        title={`Game "${name}"`}
+        subtitle={`You are player ${currentPlayer}`}
+        footer={{
+          primaryText: isMyTurn ? 'Your turn!' : `Player ${turnPlayer}'s Turn.`,
+          secondaryText: title,
+        }}
+      >
       <Component
         game={game}
         setGame={setGame}
@@ -38,7 +44,7 @@ const GameView = ({ game, setGame }) => {
         WhenMyTurn={ConditionalComponent(isMyTurn)}
         WhenNotMyTurn={ConditionalComponent(!isMyTurn)}
       />
-    </div>
+    </Container>
   );
 };
 

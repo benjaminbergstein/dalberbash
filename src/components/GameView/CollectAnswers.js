@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import CollectionForm from './CollectionForm';
+import Button from '../Button';
+import TextBox from '../TextBox';
 import {
   updateGame,
   submitAnswer,
@@ -20,6 +22,7 @@ const CollectAnswers = ({
   WhenNotMyTurn
 }) => {
   const [answer, setAnswer] = useState('');
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const {
     name,
     currentPlayer,
@@ -34,6 +37,7 @@ const CollectAnswers = ({
 
   const handleSubmit = () => {
     submitAnswer(name, currentPlayer, answer);
+    setHasSubmitted(true);
   };
 
   const startVoting = () => {
@@ -51,24 +55,29 @@ const CollectAnswers = ({
   return (
     <>
       <WhenMyTurn>
-        <CollectionForm
-          prompt="What's the real answer?"
-          handleSubmit={handleSubmit}
-          field={answer}
-          setField={setAnswer}
-        />
-        <div>{answerCount} answers</div>
-        {Object.entries(answers).map(([player, answer]) => (
-          <div>{answer}</div>
-        ))}
-        {everyoneAnswered && (
-          <button onClick={startVoting}>Start Voting</button>
+        {!hasSubmitted && (
+          <CollectionForm
+            prompt="What's the real answer?"
+            handleSubmit={handleSubmit}
+            field={answer}
+            setField={setAnswer}
+          />
+        )}
+        {hasSubmitted && (
+          <>
+            <TextBox theme='gray' text={`${answerCount} answer(s)`} />
+            {Object.entries(answers).map(([player, answer]) => (
+              <TextBox theme='green' text={answer} />
+            ))}
+            {everyoneAnswered && (
+              <Button onClick={startVoting} text='Start Voting' />
+            )}
+          </>
         )}
       </WhenMyTurn>
 
       <WhenNotMyTurn>
-        <div>The prompt is:</div>
-        <div>{prompt}</div>
+        <TextBox theme='gray' text={prompt} />
         <CollectionForm
           prompt="What's your answer?"
           handleSubmit={handleSubmit}
