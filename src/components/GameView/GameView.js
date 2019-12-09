@@ -17,7 +17,7 @@ const ROUND_COMPONENTS = {
 
 const ConditionalComponent = (condition) => ({ children }) => (condition && children);
 
-const GameView = ({ game, setGame }) => {
+const GameView = ({ game, setGame, setWatchGamePaused }) => {
   const {
     name,
     currentPlayer,
@@ -41,6 +41,7 @@ const GameView = ({ game, setGame }) => {
         game={game}
         setGame={setGame}
         isMyTurn={isMyTurn}
+        setWatchGamePaused={setWatchGamePaused}
         WhenMyTurn={ConditionalComponent(isMyTurn)}
         WhenNotMyTurn={ConditionalComponent(!isMyTurn)}
       />

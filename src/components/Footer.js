@@ -8,11 +8,12 @@ const Footer = ({ primaryText, secondaryText }) => (
     left: '0',
     background: '#eeefee',
     color: '#333433',
-    padding: '1em',
     fontWeight: '900',
   }}>
-    <div style={{ fontSize: '0.6rem' }}>{primaryText}</div>
-    <div style={{ fontSize: '1rem' }}>{secondaryText}</div>
+    <div style={{ padding: '1em' }}>
+      <div style={{ fontSize: '0.6rem' }}>{primaryText}</div>
+      <div style={{ fontSize: '1rem' }}>{secondaryText}</div>
+    </div>
   </div>
 );
 

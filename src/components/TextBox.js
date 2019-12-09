@@ -13,7 +13,7 @@ const COLORS = {
   },
 };
 
-const TextBox = ({ theme, text, marginTop}) => {
+const TextBox = ({ theme, text, marginTop }) => {
   const colors = COLORS[theme];
 
   return (

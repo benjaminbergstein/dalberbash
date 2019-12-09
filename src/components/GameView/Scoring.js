@@ -4,6 +4,7 @@ import {
   updateGame,
 } from '../../game'
 import Button from '../Button';
+import TextBox from '../TextBox';
 
 const CHECK = '✅';
 
@@ -18,6 +19,7 @@ const Scoring = ({ game, WhenMyTurn }) => {
   } = game;
   const { answers, voteOptions, votes } = round;
 
+  const correctAnswer = (player) => parseInt(votes[player]) === turnPlayer;
   const isTurnPlayer = (player) => {
     return parseInt(player) === turnPlayer;
   };
@@ -31,8 +33,7 @@ const Scoring = ({ game, WhenMyTurn }) => {
     if (isTurnPlayer(player)) {
       return votesFor(player) === 0 ? 2 : 0
     } else {
-      const correctAnswer = parseInt(votes[player]) === turnPlayer;
-      return (correctAnswer ? 2 : 0) + votesFor(player);
+      return (correctAnswer(player) ? 2 : 0) + votesFor(player);
     }
   };
 
@@ -64,31 +65,35 @@ const Scoring = ({ game, WhenMyTurn }) => {
     updateGame(updatedGame);
   };
 
+  const TitleCell = ({ children }) => (
+    <th style={{
+      textAlign: 'center',
+      padding: '0.5rem',
+    }}>{children}</th>
+  );
+  const Cell = ({ children }) => (
+    <td style={{
+      textAlign: 'center',
+      padding: '0.5rem',
+    }}>{children}</td>
+  );
+
+  const playerOrder = Object.entries(totals)
+    .sort(([p1, s1], [p2, s2]) => s2 - s1)
+    .map(([player]) => player);
+
   return (
     <>
-      <table style={{ width: '100%', border: '1px solid #ccc' }}>
-        <tr>
-          <th>Player</th>
-          <th>Answer</th>
-          <th></th>
-          <th>Votes</th>
-          <th>Round Pts</th>
-          <th>Total Pts</th>
-        </tr>
-
-        {Object.entries(points).map(([player, points]) => {
-          return (
-            <tr>
-              <td style={{ textAlign: 'center', }}>{player}</td>
-              <td style={{ textAlign: 'center', }}>{answers[player]}</td>
-              <td style={{ textAlign: 'center', }}>{isTurnPlayer(player) ? CHECK : ''}</td>
-              <td style={{ textAlign: 'center', }}>{votesFor(player)}</td>
-              <td style={{ textAlign: 'center', }}>{points}</td>
-              <td style={{ textAlign: 'center', }}>{totals[player]}</td>
-            </tr>
-          );
-        })}
-      </table>
+      {playerOrder.map((player) => (
+        <div>
+          <TextBox theme='green' marginTop='0.5rem' text={`Player ${player}`} />
+          <TextBox theme='gray' text={`${totals[player]} pts total, ${points[player]} this round.`} />
+          <TextBox theme='gray' text={`${votesFor(player)} votes.`} />
+          {correctAnswer(player) && (
+            <TextBox theme='gray' text='${CHECK} Voted Correctly!' />
+          )}
+        </div>
+      ))}
 
       <WhenMyTurn>
         <Button text='Next Round' onClick={startNextRound} />

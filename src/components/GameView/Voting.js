@@ -39,20 +39,22 @@ const Voting = ({
       </WhenMyTurn>
 
       <WhenNotMyTurn>
-        <TextBox theme='gray' text='Which answer is real?' />
         {voteSubmitted && (
           <TextBox theme='green' text='Waiting for other players...' />
         )}
-        <div>
-          {voteOptions.map(([player, answer]) => (
-            <Button
-              theme={vote === player ? 'green' : 'lightgray'}
-              onClick={() => setVote(player)}
-              text={answer}
-            />
-          ))}
-          <Button onClick={handleVoteSubmit} text='Submit' />
-        </div>
+        {!voteSubmitted && (
+          <div>
+          <TextBox theme='gray' text='Which answer is real?' />
+            {voteOptions.map(([player, answer]) => (
+              <Button
+                theme={vote === player ? 'green' : 'lightgray'}
+                onClick={() => setVote(player)}
+                text={answer}
+              />
+            ))}
+            <Button onClick={handleVoteSubmit} text='Submit' />
+          </div>
+        )}
       </WhenNotMyTurn>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CollectionForm from './CollectionForm';
 import Button from '../Button';
 import TextBox from '../TextBox';
@@ -18,6 +18,7 @@ function shuffle(a) {
 const CollectAnswers = ({
   game,
   setGame,
+  setWatchGamePaused,
   WhenMyTurn,
   WhenNotMyTurn
 }) => {
@@ -30,6 +31,8 @@ const CollectAnswers = ({
     players,
     round,
   } = game;
+
+  useEffect(() => { setWatchGamePaused(!hasSubmitted) }, [hasSubmitted]);
 
   const { prompt, answers } = round;
   const answerCount = Object.entries(answers).length;
@@ -78,12 +81,17 @@ const CollectAnswers = ({
 
       <WhenNotMyTurn>
         <TextBox theme='gray' text={prompt} />
-        <CollectionForm
-          prompt="What's your answer?"
-          handleSubmit={handleSubmit}
-          field={answer}
-          setField={setAnswer}
-        />
+        {!hasSubmitted && (
+          <CollectionForm
+            prompt="What's your answer?"
+            handleSubmit={handleSubmit}
+            field={answer}
+            setField={setAnswer}
+          />
+        )}
+        {hasSubmitted && (
+          <TextBox theme='green' text='Waiting for other players...' />
+        )}
       </WhenNotMyTurn>
     </>
   );

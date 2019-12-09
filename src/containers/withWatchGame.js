@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { setGame, fetchGame } from '../game';
 import deepEqual from 'deep-equal';
 
 const withWatchGame = (Component) => {
   return ({ game, setGame, ...props }) => {
+    const [isWatchGamePaused, setWatchGamePaused] = useState(false);
     const {
       currentPlayer,
       players,
@@ -21,7 +22,7 @@ const withWatchGame = (Component) => {
         fetchGame(name).then((updatedGame) => {
           const localUpdatedGame = { ...updatedGame, currentPlayer };
           const hasChanged = !deepEqual(game, localUpdatedGame);
-          if (hasChanged) setGame(localUpdatedGame);
+          if (hasChanged && !isWatchGamePaused) setGame(localUpdatedGame);
         });
       }, 1000);
 
@@ -31,6 +32,7 @@ const withWatchGame = (Component) => {
     return <Component
       game={game}
       setGame={setGame}
+      setWatchGamePaused={setWatchGamePaused}
       {...props}
     />
   };
