@@ -34,6 +34,7 @@ const CreateGame = ({ game, setGame }) => {
 
   return (
     <div>
+      <TextBox theme='blue' text='Create a game' marginTop='0.5em' />
       <form onSubmit={handleSubmit}>
         <Input
           autoFocus={true}
@@ -62,7 +63,7 @@ const GameList = ({ games, setGame }) => {
 
   return (
     <div>
-      <TextBox theme='gray' text='Games to Join' marginTop='0.5rem' />
+      <TextBox theme='gray' text='Join a game' marginTop='0.5rem' />
       {Object.entries(games).map(([name, game]) => (
         <Button theme='gray' text={name} onClick={handleClick(name, game)} />
       ))}
@@ -88,10 +89,13 @@ const StartView = (props) => {
       title='Dalberbash'
       subtitle='An online companion to Balderdash'
     >
-      <CreateGame {...props} />
       {anyGames && (
         <GameList games={games} {...props} />
       )}
+      {anyGames || (
+        <TextBox theme='gray' text='There are no games currently accepting players. Create a game.' marginTop='0.5rem' />
+      )}
+      <CreateGame {...props} />
     </Container>
   );
 };

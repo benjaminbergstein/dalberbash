@@ -3,7 +3,7 @@ import fetch from 'isomorphic-fetch';
 const HOST = 'http://dev-1.wips.link:3001';
 
 const DEFAULT_GAME = {
-  name: 'Untitled',
+  name: '',
   players: 0,
   state: 'not_joined',
 };

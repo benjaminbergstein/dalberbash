@@ -1,6 +1,11 @@
 import React from 'react';
 
 const COLORS = {
+  'blue': {
+    background: '#eeeef9',
+    color: '#333366',
+    borderBottom: '1px solid #333366',
+  },
   'green': {
     background: '#eef9ee',
     color: '#336633',
@@ -13,15 +18,27 @@ const COLORS = {
   },
 };
 
-const TextBox = ({ theme, text, marginTop }) => {
+const PROFILES = {
+  default: {
+    fontSize: '0.7rem',
+    padding: '0.5rem 1rem',
+  },
+  small: {
+    fontSize: '0.6rem',
+    padding: '0.25rem 0.5rem',
+  },
+};
+
+const TextBox = ({ theme, profile, text, marginTop }) => {
   const colors = COLORS[theme];
+  console.log(profile)
+  const profileStyles = PROFILES[profile || 'default'];
 
   return (
     <div style={{
       ...colors,
+      ...profileStyles,
       marginTop,
-      fontSize: '0.7rem',
-      padding: '0.5rem 1rem',
     }}>{text}</div>
   );
 };

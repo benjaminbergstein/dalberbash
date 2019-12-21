@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App';
+import Design from './components/Design';
 import * as serviceWorker from './serviceWorker';
 import { DEFAULT_GAME, fetchGame } from './game';
 
@@ -10,7 +11,11 @@ const mountApp = (initialGame) => {
 
 const [name, currentPlayer] = window.location.hash.substr(1).split('.');
 
-if (name && currentPlayer) {
+const isDesignPage = window.location.pathname === '/design';
+
+if (isDesignPage) {
+  ReactDOM.render(<Design />, document.getElementById('root'));
+} else if (name && currentPlayer) {
   fetchGame(name)
     .then((game) => {
       mountApp({
