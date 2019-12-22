@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch';
 
-const HOST = 'http://dev-1.wips.link:3001';
+const HOST = process.env.REACT_APP_HOST;
 
 const DEFAULT_GAME = {
   name: '',

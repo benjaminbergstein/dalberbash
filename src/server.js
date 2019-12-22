@@ -10,6 +10,8 @@ const games = {};
 app.use(bodyParser.json());
 app.use(cors());
 
+app.use(express.static('build'));
+
 app.get('/games', (req, res) => {
   res.send(Object.entries(games).reduce((g, [name, game]) => {
     const { state } = game;

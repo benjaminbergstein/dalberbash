@@ -27,6 +27,8 @@ services:
          - .:/app
       networks:
          - webrtc-learning
+      environment:
+         - REACT_APP_HOST
 
 networks:
    webrtc-learning:
