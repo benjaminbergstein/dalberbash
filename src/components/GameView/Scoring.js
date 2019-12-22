@@ -90,7 +90,7 @@ const Scoring = ({ game, WhenMyTurn }) => {
           <TextBox theme='gray' text={`${totals[player]} pts total, ${points[player]} this round.`} />
           <TextBox theme='gray' text={`${votesFor(player)} votes.`} />
           {correctAnswer(player) && (
-            <TextBox theme='gray' text='${CHECK} Voted Correctly!' />
+            <TextBox theme='gray' text={`${CHECK} Voted Correctly!`} />
           )}
         </div>
       ))}

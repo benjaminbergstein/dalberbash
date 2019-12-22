@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors= require('cors');
 const app = express();
 
-const EXTRACT_GAME_ID = /^\/games\/(\w+)$/;
+const EXTRACT_GAME_ID = /^\/games\/([a-zA-Z0-0-]+)$/;
 
 const games = {};
 

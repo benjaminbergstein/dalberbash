@@ -42,7 +42,7 @@ const CreateGame = ({ game, setGame }) => {
             ...game,
             players: 1,
             currentPlayer: 1,
-            name: e.target.value
+            name: e.target.value.replace(' ', '-').replace(/[^-a-zA-Z1-9]/, '')
           })}
           value={game.name}
         />

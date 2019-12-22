@@ -28,7 +28,7 @@ services:
       networks:
          - webrtc-learning
       environment:
-         - REACT_APP_HOST
+         - REACT_APP_HOST=http://dev-1.wips.link:3001
 
 networks:
    webrtc-learning:

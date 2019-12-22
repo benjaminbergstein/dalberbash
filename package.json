@@ -17,7 +17,7 @@
   "scripts": {
     "server": "nodemon ./src/server.js",
     "server:prod": "node ./src/server.js",
-    "start": "REACT_APP_HOST=http://dev-1.wips.link:3001 react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
