@@ -31,7 +31,6 @@ const PROFILES = {
 
 const TextBox = ({ theme, profile, text, marginTop }) => {
   const colors = COLORS[theme];
-  console.log(profile)
   const profileStyles = PROFILES[profile || 'default'];
 
   return (

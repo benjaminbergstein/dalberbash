@@ -16,6 +16,7 @@ const Scoring = ({ game, WhenMyTurn }) => {
     players,
     turnPlayer,
     roundTallies,
+    playerNames,
   } = game;
   const { answers, voteOptions, votes } = round;
 
@@ -82,11 +83,13 @@ const Scoring = ({ game, WhenMyTurn }) => {
     .sort(([p1, s1], [p2, s2]) => s2 - s1)
     .map(([player]) => player);
 
+  const getPlayerName = (player) => playerNames[player] || `Player ${player}`;
+
   return (
     <>
       {playerOrder.map((player) => (
         <div>
-          <TextBox theme='green' marginTop='0.5rem' text={`Player ${player}`} />
+          <TextBox theme='green' marginTop='0.5rem' text={`${getPlayerName(player)}`} />
           <TextBox theme='gray' text={`${totals[player]} pts total, ${points[player]} this round.`} />
           <TextBox theme='gray' text={`${votesFor(player)} votes.`} />
           {correctAnswer(player) && (

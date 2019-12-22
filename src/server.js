@@ -54,10 +54,12 @@ const extractGameIdFromPath = (req) => req.path.match(EXTRACT_GAME_ID)[1];
 //
 app.post(/\/games/, (req, res) => {
   const gameId = extractGameIdFromPath(req);
+  const isExistingGame = !!games[gameId];
   games[gameId] = {
     name: gameId,
     ...req.body,
   };
+  if (!isExistingGame) gamePlayers[gameId] = {};
   res.send('ok');
 });
 
@@ -67,9 +69,13 @@ app.post(/\/games/, (req, res) => {
 app.get(/\/games/, (req, res) => {
   const gameId = extractGameIdFromPath(req);
   const game = games[gameId];
+  const currentGamePlayers = gamePlayers[gameId];
 
   if (game) {
-    res.send(game);
+    res.send({
+      ...game,
+      playerNames: currentGamePlayers,
+    });
     return;
   }
 
@@ -85,10 +91,10 @@ app.get(/\/games/, (req, res) => {
 //
 app.post(/\/players/, (req, res) => {
   const { name, player, playerName } = req.body;
-  const gamePlayers = gamePlayers[name];
-  gamePlayers[name] {
-    ...gamePlayers,
-      [player]: playerName,
+  currentGamePlayers = gamePlayers[name];
+  gamePlayers[name] = {
+    ...currentGamePlayers,
+    [parseInt(player)]: playerName,
   };
   res.send('ok');
 });

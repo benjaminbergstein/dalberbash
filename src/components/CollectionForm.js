@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
-import TextBox from '../TextBox';
-import Button from '../Button';
+import TextBox from './TextBox';
+import Button from './Button';
 
-const CollectionForm = ({ prompt, field, setField, handleSubmit }) => {
+const CollectionForm = ({
+  prompt,
+  field,
+  setField,
+  handleSubmit,
+  marginTop,
+}) => {
   const onSubmit = (e) => {
     e.preventDefault();
     handleSubmit();
@@ -10,7 +16,7 @@ const CollectionForm = ({ prompt, field, setField, handleSubmit }) => {
 
   return (
     <div>
-      <TextBox theme='green' text={prompt} />
+      <TextBox theme='green' text={prompt} marginTop={marginTop} />
       <form onSubmit={onSubmit}>
         <div style={{ padding: '0.5rem 1rem 0' }}>
           <textarea

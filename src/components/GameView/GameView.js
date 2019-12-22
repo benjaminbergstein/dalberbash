@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Container from '../Container';
-import CollectionForm from './CollectionForm';
 import SubmitPrompt from './SubmitPrompt';
 import AwaitingPrompt from './AwaitingPrompt';
 import CollectAnswers from './CollectAnswers';

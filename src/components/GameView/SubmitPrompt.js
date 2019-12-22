@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CollectionForm from './CollectionForm';
+import CollectionForm from '../CollectionForm';
 import { updateRound } from '../../game';
 
 const SubmitPrompt = ({ game, setGame }) => {

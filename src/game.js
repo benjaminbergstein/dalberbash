@@ -45,6 +45,14 @@ const joinGame = (name) => fetch(`${HOST}/join`, {
   body: JSON.stringify({ name }),
 }).then((res) => res.json());
 
+const setPlayer = ({ player, playerName, name }) => fetch(`${HOST}/players`, {
+  method: 'post',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ player, playerName, name }),
+});
+
 const startGame = (name) => fetch(`${HOST}/start`, {
   method: 'post',
   headers: {
@@ -73,6 +81,7 @@ export {
   DEFAULT_GAME,
   DEFAULT_ROUND,
   createGame,
+  setPlayer,
   updateGame,
   updateRound,
   fetchGame,

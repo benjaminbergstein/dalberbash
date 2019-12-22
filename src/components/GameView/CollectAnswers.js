@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import CollectionForm from './CollectionForm';
+import CollectionForm from '../CollectionForm';
 import Button from '../Button';
 import TextBox from '../TextBox';
 import {
