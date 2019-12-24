@@ -6,6 +6,7 @@ import CollectAnswers from './CollectAnswers';
 import Voting from './Voting';
 import Scoring from './Scoring';
 import withWatchGame from '../../containers/withWatchGame';
+import withPromptSuggestions from '../../containers/withPromptSuggestions';
 
 const ROUND_COMPONENTS = {
   awaiting_prompt: [AwaitingPrompt, 'Choose Prompt'],
@@ -16,7 +17,14 @@ const ROUND_COMPONENTS = {
 
 const ConditionalComponent = (condition) => ({ children }) => (condition && children);
 
-const GameView = ({ game, setGame, setWatchGamePaused }) => {
+const GameView = ({
+  game,
+  setGame,
+  setWatchGamePaused,
+  getRandomPrompt,
+  setSelectedPrompt,
+  selectedPrompt,
+}) => {
   const {
     name,
     currentPlayer,
@@ -41,6 +49,9 @@ const GameView = ({ game, setGame, setWatchGamePaused }) => {
         setGame={setGame}
         isMyTurn={isMyTurn}
         setWatchGamePaused={setWatchGamePaused}
+        getRandomPrompt={getRandomPrompt}
+        setSelectedPrompt={setSelectedPrompt}
+        selectedPrompt={selectedPrompt}
         WhenMyTurn={ConditionalComponent(isMyTurn)}
         WhenNotMyTurn={ConditionalComponent(!isMyTurn)}
       />
@@ -48,4 +59,4 @@ const GameView = ({ game, setGame, setWatchGamePaused }) => {
   );
 };
 
-export default withWatchGame(GameView);
+export default withPromptSuggestions(withWatchGame(GameView));

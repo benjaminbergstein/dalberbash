@@ -6,24 +6,18 @@ import {
   updateGame,
   submitAnswer,
 } from '../../game';
-
-function shuffle(a) {
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-};
+import { shuffle } from '../../utilities';
 
 const CollectAnswers = ({
   game,
   setGame,
   setWatchGamePaused,
+  selectedPrompt,
   WhenMyTurn,
   WhenNotMyTurn
 }) => {
-  const [answer, setAnswer] = useState('');
-  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [answer, setAnswer] = useState(selectedPrompt ? selectedPrompt[2] : '');
+  const [hasSubmitted, setHasSubmitted] = useState(!!selectedPrompt);
   const {
     name,
     currentPlayer,
@@ -42,6 +36,12 @@ const CollectAnswers = ({
     submitAnswer(name, currentPlayer, answer);
     setHasSubmitted(true);
   };
+
+  useEffect(() => {
+    if (selectedPrompt) {
+      handleSubmit();
+    }
+  });
 
   const startVoting = () => {
     updateGame({
@@ -80,7 +80,7 @@ const CollectAnswers = ({
       </WhenMyTurn>
 
       <WhenNotMyTurn>
-        <TextBox theme='gray' text={prompt} />
+        <TextBox theme='gray' text={`The prompt is: "${prompt}"`} />
         {!hasSubmitted && (
           <CollectionForm
             prompt="What's your answer?"

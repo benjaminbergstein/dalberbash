@@ -18,6 +18,11 @@ const COLORS = {
     background: '#eef9ee',
     color: '#336633',
   },
+  yellow: {
+    border: '1px solid #666633',
+    background: '#f9f3dd',
+    color: '#666633',
+  },
   blue: {
     border: '1px solid #333366',
     background: '#eeeef9',

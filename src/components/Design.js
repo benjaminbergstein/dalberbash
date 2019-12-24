@@ -67,8 +67,9 @@ const ButtonExamples = () => (
 <Button theme='green' text='Enter' />
 <Button theme='blue' text='Pounce' />`}>
       <Button theme='lightgray' text='Next' />
-      <Button theme='green' text='Enter' />
-      <Button theme='blue' text='Pounce' />
+      <Button theme='green' text='Success' />
+      <Button theme='blue' text='Info' />
+      <Button theme='yellow' text='Warning' />
     </Example>
   </>
 );

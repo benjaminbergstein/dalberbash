@@ -5,12 +5,21 @@ import SubmitPrompt from './SubmitPrompt';
 const AwaitingPrompt = ({
   game,
   setGame,
+  getRandomPrompt,
+  selectedPrompt,
+  setSelectedPrompt,
   WhenMyTurn,
-  WhenNotMyTurn
+  WhenNotMyTurn,
 }) => (
   <>
     <WhenMyTurn>
-      <SubmitPrompt game={game} setGame={setGame} />
+      <SubmitPrompt
+        game={game}
+        setGame={setGame}
+        getRandomPrompt={getRandomPrompt}
+        setSelectedPrompt={setSelectedPrompt}
+        selectedPrompt={selectedPrompt}
+      />
     </WhenMyTurn>
 
     <WhenNotMyTurn>
