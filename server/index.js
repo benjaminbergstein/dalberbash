@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const app = express();
+const http = require('http');
 const {
   updateGame,
   getGames,
@@ -16,6 +16,12 @@ const { getConnection } = require('./db/db.js');
 const EXTRACT_GAME_ID = /^\/games\/([a-zA-Z0-0-]+)$/;
 
 const sendOk = (res) => () => res.send('ok');
+
+const app = express();
+const server= http.createServer(app);
+
+const initWebsocket = require('./websocket.js');
+initWebsocket(server);
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -178,4 +184,4 @@ app.post(/\/vote/, (req, res) => {
   }).then(sendOk(res));
 });
 
-app.listen(3001, () => { console.log('Server Started!'); })
+server.listen(3001, () => { console.log('Server Started!'); })

@@ -3,23 +3,14 @@ import TextBox from '../TextBox';
 import SubmitPrompt from './SubmitPrompt';
 
 const AwaitingPrompt = ({
-  game,
-  setGame,
-  getRandomPrompt,
-  selectedPrompt,
-  setSelectedPrompt,
   WhenMyTurn,
   WhenNotMyTurn,
+  setWatchGamePaused,
+  ...props,
 }) => (
   <>
     <WhenMyTurn>
-      <SubmitPrompt
-        game={game}
-        setGame={setGame}
-        getRandomPrompt={getRandomPrompt}
-        setSelectedPrompt={setSelectedPrompt}
-        selectedPrompt={selectedPrompt}
-      />
+      <SubmitPrompt {...props} />
     </WhenMyTurn>
 
     <WhenNotMyTurn>

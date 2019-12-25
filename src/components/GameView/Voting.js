@@ -11,11 +11,12 @@ const Voting = ({
   WhenMyTurn,
   WhenNotMyTurn,
 }) => {
-  const [error, setError] = useState(false);
-  const [vote, setVote] = useState(-1);
-  const [voteSubmitted, setVoteSubmitted] = useState(false);
   const { name, round, currentPlayer, players } = game;
   const { voteOptions, votes } = round;
+  const serverVote = votes[''+currentPlayer];
+  const [error, setError] = useState(false);
+  const [vote, setVote] = useState(-1);
+  const [voteSubmitted, setVoteSubmitted] = useState(serverVote || false);
 
   const voteCount = Object.entries(votes).length;
   const everyoneVoted = voteCount === players - 1;

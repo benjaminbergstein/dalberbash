@@ -8,24 +8,24 @@ import { updateRound } from '../../game';
 const SubmitPrompt = ({
   game,
   setGame,
-  getRandomPrompt,
+  randomPrompt,
+  getNewRandomPrompt,
   selectedPrompt,
   setSelectedPrompt,
   trackEvent,
+  setWatchGamePaused,
 }) => {
-  const [prompt, setPrompt] = useState(selectedPrompt[1] || '');
   const { round } = game;
+  const [prompt, setPrompt] = useState('');
+  // setWatchGamePaused(true);
   const handleSubmit = () => {
     trackEvent('Prompt', 'Submit');
     updateRound(game, round, {
       prompt,
       state: 'awaiting_answers',
     });
+    // setWatchGamePaused(false);
   };
-  const [randomPrompt, setRandomPrompt] = useState(getRandomPrompt());
-  const newRandomPrompt = () => {
-    setRandomPrompt(getRandomPrompt());
-  }
   const suggestedPromptText = `${randomPrompt[1]} (${randomPrompt[3]})`;
   const useRandomPrompt = () => {
     trackEvent('Prompt', 'Use Suggestion');
@@ -62,7 +62,7 @@ const SubmitPrompt = ({
           />
           <TextBox theme='gray' text={randomPrompt[2]} />
           <Button theme="green" text={`Use: ${randomPrompt[1]}`} onClick={useRandomPrompt} />
-          <Button theme="yellow" text="I don't like that one..." onClick={newRandomPrompt} />
+          <Button theme="yellow" text="I don't like that one..." onClick={getNewRandomPrompt} />
         </>
       )}
     </>

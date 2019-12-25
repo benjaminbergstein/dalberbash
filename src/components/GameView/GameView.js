@@ -17,15 +17,7 @@ const ROUND_COMPONENTS = {
 
 const ConditionalComponent = (condition) => ({ children }) => (condition && children);
 
-const GameView = ({
-  game,
-  setGame,
-  setWatchGamePaused,
-  getRandomPrompt,
-  setSelectedPrompt,
-  selectedPrompt,
-  resetSelectedPrompt,
-}) => {
+const GameView = ({ game, connected, ...props }) => {
   const {
     name,
     currentPlayer,
@@ -36,26 +28,25 @@ const GameView = ({
   const isMyTurn = turnPlayer === currentPlayer;
   const [Component, title] = ROUND_COMPONENTS[round.state];
 
+  const footerOptions = connected ? {
+    primaryText: isMyTurn ? 'Your turn!' : `Player ${turnPlayer}'s Turn.`,
+    secondaryText: title,
+  } : {
+    primaryText: 'Reconnecting...',
+    secondaryText: 'Hold on a second!',
+  }
   return (
     <Container
         title={`Game "${name}"`}
         subtitle={`You are player ${currentPlayer}`}
-        footer={{
-          primaryText: isMyTurn ? 'Your turn!' : `Player ${turnPlayer}'s Turn.`,
-          secondaryText: title,
-        }}
+        footer={footerOptions}
       >
       <Component
         game={game}
-        setGame={setGame}
         isMyTurn={isMyTurn}
-        setWatchGamePaused={setWatchGamePaused}
-        getRandomPrompt={getRandomPrompt}
-        setSelectedPrompt={setSelectedPrompt}
-        resetSelectedPrompt={resetSelectedPrompt}
-        selectedPrompt={selectedPrompt}
         WhenMyTurn={ConditionalComponent(isMyTurn)}
         WhenNotMyTurn={ConditionalComponent(!isMyTurn)}
+        {...props}
       />
     </Container>
   );

@@ -7,6 +7,7 @@ const {
   addToSet,
   getSetMembers,
   getType,
+  client,
 } = getConnection();
 
 const log = (data) => {
@@ -21,7 +22,10 @@ const orEmptyHash = (data) => data || {};
 const setGame = (id, data) => Promise.all([
   addToSet('games', key('game', id)),
   set(key('game', id), serialize(data)),
-]);
+]).then((args) => {
+  client.publish(key('_sub', 'game', id), 'update');
+  return args;
+})
 
 const getGame = (id) => get(key('game', id)).then(deserialize);
 const updateGame = (id, updater) =>
@@ -52,13 +56,19 @@ const resetPlayers = (gameId) => set(
 );
 
 const setPlayer = (gameId, player, name) =>
-  getPlayers(gameId).then((players) =>
-    set(
-      key('game', gameId, 'players'),
-      serialize({
-        ...players,
-        [parseInt(player)]: name,
-      })));
+  getPlayers(gameId)
+    .then((players) =>
+      set(
+        key('game', gameId, 'players'),
+        serialize({
+          ...players,
+          [parseInt(player)]: name,
+        })
+      )
+    )
+    .then(() => {
+      client.publish(key('_sub', 'game', gameId), 'update');
+    });
 
 const getPlayers = (gameId) =>
   get(key('game', gameId, 'players')).then(deserialize).then(orEmptyHash)

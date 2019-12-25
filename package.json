@@ -13,7 +13,8 @@
     "react-dom": "^16.12.0",
     "react-scripts": "3.2.0",
     "redis": "^2.8.0",
-    "webrtc": "^1.14.1"
+    "webrtc": "^1.14.1",
+    "ws": "^7.2.1"
   },
   "scripts": {
     "server": "nodemon ./server/index.js",

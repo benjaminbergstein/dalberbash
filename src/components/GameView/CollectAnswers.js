@@ -17,7 +17,6 @@ const CollectAnswers = ({
   WhenNotMyTurn
 }) => {
   const [answer, setAnswer] = useState(selectedPrompt ? selectedPrompt[2] : '');
-  const [hasSubmitted, setHasSubmitted] = useState(!!selectedPrompt);
   const {
     name,
     currentPlayer,
@@ -26,9 +25,10 @@ const CollectAnswers = ({
     round,
   } = game;
 
-  useEffect(() => { setWatchGamePaused(!hasSubmitted) }, [hasSubmitted]);
-
   const { prompt, answers } = round;
+  const serverAnswer = answers[''+currentPlayer];
+  const [hasSubmitted, setHasSubmitted] = useState(!!serverAnswer);
+
   const answerCount = Object.entries(answers).length;
   const everyoneAnswered = answerCount === players;
 
@@ -37,8 +37,9 @@ const CollectAnswers = ({
     setHasSubmitted(true);
   };
 
+  useEffect(() => { setWatchGamePaused(!hasSubmitted) }, [hasSubmitted]);
   useEffect(() => {
-    if (selectedPrompt) {
+    if (selectedPrompt && !hasSubmitted) {
       handleSubmit();
     }
   });

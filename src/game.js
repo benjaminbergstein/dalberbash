@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch';
 
 const HOST = process.env.REACT_APP_HOST;
+const WEBSOCKET_HOST = HOST.replace('http', 'ws');
 
 const DEFAULT_GAME = {
   name: '',
@@ -12,6 +13,18 @@ const DEFAULT_ROUND = {
   state: 'awaiting_prompt',
   prompt: undefined,
   answers: {},
+};
+
+const webSockets = {};
+const getWebSocket = (gameId) => {
+  if (!webSockets[gameId]) {
+    webSockets[gameId] = new WebSocket(`${WEBSOCKET_HOST}/sub/games/${gameId}`);
+  }
+  return webSockets[gameId];
+};
+
+const resetWebSocket = (gameId) => {
+  webSockets[gameId] = undefined;
 };
 
 const fetchGames = () => fetch(`${HOST}/games`).then((res) => res.json());
@@ -80,6 +93,8 @@ const submitVote = (name, player, vote) => fetch(`${HOST}/vote`, {
 export {
   DEFAULT_GAME,
   DEFAULT_ROUND,
+  getWebSocket,
+  resetWebSocket,
   createGame,
   setPlayer,
   updateGame,
