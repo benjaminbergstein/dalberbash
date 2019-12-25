@@ -3,12 +3,18 @@ import {
   DEFAULT_ROUND,
   updateGame,
 } from '../../game'
+import withTrackEvent from '../../containers/withTrackEvent';
 import Button from '../Button';
 import TextBox from '../TextBox';
 
 const CHECK = '✅';
 
-const Scoring = ({ game, resetSelectedPrompt, WhenMyTurn }) => {
+const Scoring = ({
+  game,
+  resetSelectedPrompt,
+  trackEvent,
+  WhenMyTurn,
+}) => {
   resetSelectedPrompt();
 
   const {
@@ -64,7 +70,7 @@ const Scoring = ({ game, resetSelectedPrompt, WhenMyTurn }) => {
       round: DEFAULT_ROUND,
       roundTallies: updatedRoundTallies,
     };
-
+    trackEvent('Round', 'Start');
     updateGame(updatedGame);
   };
 
@@ -107,4 +113,4 @@ const Scoring = ({ game, resetSelectedPrompt, WhenMyTurn }) => {
   );
 };
 
-export default Scoring;
+export default withTrackEvent(Scoring);

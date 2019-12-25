@@ -4,9 +4,10 @@ import Container from './Container';
 import TextBox from './TextBox';
 import Button from './Button';
 import withWatchGame from '../containers/withWatchGame';
+import withTrackEvent from '../containers/withTrackEvent';
 import { startGame, setPlayer } from '../game';
 
-const PreGameView = ({ game }) => {
+const PreGameView = ({ game, trackEvent }) => {
   const {
     currentPlayer,
     players,
@@ -15,12 +16,19 @@ const PreGameView = ({ game }) => {
   } = game;
   const [playerName, setPlayerName] = useState(`Player ${currentPlayer}`);
   const [playerNameSubmitted, setPlayerNameSubmitted] = useState(false);
-  const handleClick = () => startGame(name);
+  const handleClick = () => {
+    trackEvent('Game', 'Start');
+    trackEvent('Round', 'Start');
+    startGame(name);
+  };
   const handleSubmit = () => setPlayer({
     name,
     player: currentPlayer,
     playerName,
-  }).then(() => setPlayerNameSubmitted(true));
+  }).then(() => {
+    trackEvent('Player', 'Set Name');
+    setPlayerNameSubmitted(true);
+  });
   const playerNameValues = Object.values(playerNames || {});
   const unnamedPlayers = players - playerNameValues.length;
 
@@ -60,4 +68,4 @@ const PreGameView = ({ game }) => {
   )
 };
 
-export default withWatchGame(PreGameView);
+export default withTrackEvent(withWatchGame(PreGameView));

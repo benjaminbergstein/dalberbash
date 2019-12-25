@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import CollectionForm from '../CollectionForm';
 import TextBox from '../TextBox';
 import Button from '../Button';
+import withTrackEvent from '../../containers/withTrackEvent';
 import { updateRound } from '../../game';
 
 const SubmitPrompt = ({
@@ -10,10 +11,12 @@ const SubmitPrompt = ({
   getRandomPrompt,
   selectedPrompt,
   setSelectedPrompt,
+  trackEvent,
 }) => {
   const [prompt, setPrompt] = useState(selectedPrompt[1] || '');
   const { round } = game;
   const handleSubmit = () => {
+    trackEvent('Prompt', 'Submit');
     updateRound(game, round, {
       prompt,
       state: 'awaiting_answers',
@@ -25,6 +28,7 @@ const SubmitPrompt = ({
   }
   const suggestedPromptText = `${randomPrompt[1]} (${randomPrompt[3]})`;
   const useRandomPrompt = () => {
+    trackEvent('Prompt', 'Use Suggestion');
     updateRound(game, round, {
       prompt: suggestedPromptText,
       state: 'awaiting_answers',
@@ -65,4 +69,4 @@ const SubmitPrompt = ({
   )
 };
 
-export default SubmitPrompt;
+export default withTrackEvent(SubmitPrompt);

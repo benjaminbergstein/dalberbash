@@ -6,6 +6,7 @@ import Container from '../Container';
 import Input from '../Input';
 import TextBox from '../TextBox';
 import Button from '../Button';
+import withTrackEvent from '../../containers/withTrackEvent';
 import {
   DEFAULT_ROUND,
   createGame,
@@ -13,7 +14,7 @@ import {
   fetchGames,
 } from '../../game';
 
-const CreateGame = ({ game, setGame }) => {
+const CreateGame = ({ game, setGame, trackEvent }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const updatedGame = {
@@ -27,6 +28,7 @@ const CreateGame = ({ game, setGame }) => {
       .then(() => {
         const { name, currentPlayer } = updatedGame;
         window.location.hash = `${name}.${currentPlayer}`;
+        trackEvent('Game', 'Create');
         setGame(updatedGame);
       })
       .catch(() => {});
@@ -100,4 +102,4 @@ const StartView = (props) => {
   );
 };
 
-export default StartView;
+export default withTrackEvent(StartView);
