@@ -9,9 +9,14 @@ const CollectionForm = ({
   handleSubmit,
   marginTop,
 }) => {
+  const [error, setError] = useState(false);
   const onSubmit = (e) => {
     e.preventDefault();
-    handleSubmit();
+    if (field === '') {
+      setError('Please complete above field.');
+    } else {
+      handleSubmit();
+    }
   };
 
   return (
@@ -34,6 +39,9 @@ const CollectionForm = ({
           />
         </div>
 
+        {error !== false && (
+          <TextBox theme='yellow' text={error} marginTop='0.5em' />
+        )}
         <Button text='Submit' />
       </form>
     </div>

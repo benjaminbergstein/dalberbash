@@ -12,15 +12,17 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.2.0",
+    "redis": "^2.8.0",
     "webrtc": "^1.14.1"
   },
   "scripts": {
-    "server": "nodemon ./src/server.js",
-    "server:prod": "node ./src/server.js",
+    "server": "nodemon ./server/index.js",
+    "server:prod": "node ./server/index.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "db:reset": "node ./server/db/reset.js"
   },
   "eslintConfig": {
     "extends": "react-app"

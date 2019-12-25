@@ -15,8 +15,15 @@ import {
 } from '../../game';
 
 const CreateGame = ({ game, setGame, trackEvent }) => {
+  const [error, setError] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (game.name === '') {
+      setError('Please supply a name for this game');
+      return;
+    }
+
     const updatedGame = {
       ...game,
       turnPlayer: 1,
@@ -40,14 +47,21 @@ const CreateGame = ({ game, setGame, trackEvent }) => {
       <form onSubmit={handleSubmit}>
         <Input
           autoFocus={true}
-          onChange={(e) => setGame({
-            ...game,
-            players: 1,
-            currentPlayer: 1,
-            name: e.target.value.replace(' ', '-').replace(/[^-a-zA-Z1-9]/, '')
-          })}
+          onChange={(e) => {
+            setError(false);
+            setGame({
+              ...game,
+              players: 1,
+              currentPlayer: 1,
+              name: e.target.value.replace(' ', '-').replace(/[^-a-zA-Z1-9]/, '')
+            })
+          }}
           value={game.name}
         />
+
+        {error !== false && (
+          <TextBox theme='yellow' text={error} marginTop='0.5em' />
+        )}
         <Button text='Create Game' />
       </form>
     </div>

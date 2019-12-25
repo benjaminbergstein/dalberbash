@@ -1,12 +1,21 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors= require('cors');
+const cors = require('cors');
 const app = express();
+const {
+  updateGame,
+  getGames,
+  getGame,
+  setGame,
+  resetPlayers,
+  setPlayer,
+  getPlayers,
+} = require('./db/game.js');
+const { getConnection } = require('./db/db.js');
 
 const EXTRACT_GAME_ID = /^\/games\/([a-zA-Z0-0-]+)$/;
 
-const games = {};
-const gamePlayers = {};
+const sendOk = (res) => () => res.send('ok');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -17,11 +26,13 @@ app.use(express.static('build'));
 // List games accepting players
 //
 app.get('/games', (req, res) => {
-  res.send(Object.entries(games).reduce((g, [name, game]) => {
-    const { state } = game;
-    if (state === 'waiting') return { ...g, [name]: game }
-    return g;
-  }, {}));
+  return getGames().then((games) => {
+    res.send(Object.entries(games).reduce((g, [name, game]) => {
+      const { state } = game;
+      if (state === 'waiting') return { ...g, [name]: game }
+      return g;
+    }, {}));
+  });
 });
 
 // POST /join
@@ -31,18 +42,19 @@ app.get('/games', (req, res) => {
 //
 app.post(/\/join/, (req, res) => {
   const { name } = req.body;
-  const game = games[name];
-  const { players } = game;
-  const currentPlayer = players + 1;
-  const updatedGame = {
-    ...game,
-    name,
-    players: players + 1,
-    currentPlayer,
-  };
-  games[name] = updatedGame;
-
-  res.send(updatedGame);
+  return getGame(name).then((game) => {
+    const { players } = game;
+    const currentPlayer = players + 1;
+    const updatedGame = {
+      ...game,
+      name,
+      players: players + 1,
+      currentPlayer,
+    };
+    setGame(name, updatedGame).then(() => {
+      res.send(updatedGame);
+    });
+  });
 });
 
 const extractGameIdFromPath = (req) => req.path.match(EXTRACT_GAME_ID)[1];
@@ -54,13 +66,18 @@ const extractGameIdFromPath = (req) => req.path.match(EXTRACT_GAME_ID)[1];
 //
 app.post(/\/games/, (req, res) => {
   const gameId = extractGameIdFromPath(req);
-  const isExistingGame = !!games[gameId];
-  games[gameId] = {
-    name: gameId,
-    ...req.body,
-  };
-  if (!isExistingGame) gamePlayers[gameId] = {};
-  res.send('ok');
+  return getGame(gameId).then((isExistingGame) => {
+    const updatedGame = {
+      name: gameId,
+      ...req.body,
+    };
+    Promise.all([
+      setGame(gameId, updatedGame),
+      resetPlayers(),
+    ]).then(() => {
+      res.send('ok');
+    });
+  });
 });
 
 // GET /games/:gameId
@@ -68,18 +85,19 @@ app.post(/\/games/, (req, res) => {
 //
 app.get(/\/games/, (req, res) => {
   const gameId = extractGameIdFromPath(req);
-  const game = games[gameId];
-  const currentGamePlayers = gamePlayers[gameId];
-
-  if (game) {
-    res.send({
-      ...game,
-      playerNames: currentGamePlayers,
-    });
-    return;
-  }
-
-  res.sendStatus(404);
+  return Promise.all([
+    getGame(gameId),
+    getPlayers(gameId),
+  ]).then(([game, playerNames]) => {
+    if (game) {
+      res.send({
+        ...game,
+        playerNames,
+      });
+      return;
+    }
+    res.sendStatus(404);
+  });
 });
 
 // POST /players
@@ -91,12 +109,8 @@ app.get(/\/games/, (req, res) => {
 //
 app.post(/\/players/, (req, res) => {
   const { name, player, playerName } = req.body;
-  currentGamePlayers = gamePlayers[name];
-  gamePlayers[name] = {
-    ...currentGamePlayers,
-    [parseInt(player)]: playerName,
-  };
-  res.send('ok');
+  return setPlayer(name, player, playerName)
+    .then(sendOk(res));
 });
 
 // POST /start
@@ -106,13 +120,10 @@ app.post(/\/players/, (req, res) => {
 //
 app.post(/\/start/, (req, res) => {
   const { name } = req.body;
-  const game = games[name];
-
-  games[name] = {
+  return updateGame(name, (game) => ({
     ...game,
     state: 'playing',
-  }
-  res.send('ok');
+  })).then(sendOk(res));
 });
 
 // POST /answer
@@ -124,21 +135,21 @@ app.post(/\/start/, (req, res) => {
 //
 app.post(/\/answer/, (req, res) => {
   const { name, player, answer } = req.body;
-  const game = games[name];
-  const { round } = game;
-  const { answers } = round;
-  const updatedGame = {
-    ...game,
-    round: {
-      ...round,
-      answers: {
-        ...answers,
-        [player]: answer,
+
+  return updateGame(name, (game) => {
+    const { round } = game;
+    const { answers } = round;
+    return {
+      ...game,
+      round: {
+        ...round,
+        answers: {
+          ...answers,
+          [player]: answer,
+        },
       },
-    },
-  };
-  games[name] = updatedGame;
-  res.send('ok');
+    };
+  }).then(sendOk(res));
 });
 
 // POST /vote
@@ -150,21 +161,21 @@ app.post(/\/answer/, (req, res) => {
 //
 app.post(/\/vote/, (req, res) => {
   const { name, player, vote } = req.body;
-  const game = games[name];
-  const { round } = game;
-  const { votes } = round;
-  const updatedGame = {
-    ...game,
-    round: {
-      ...round,
-      votes: {
-        ...votes,
-        [player]: vote,
+
+  return updateGame(name, (game) => {
+    const { round } = game;
+    const { votes } = round;
+    return {
+      ...game,
+      round: {
+        ...round,
+        votes: {
+          ...votes,
+          [player]: vote,
+        },
       },
-    },
-  };
-  games[name] = updatedGame;
-  res.send('ok');
+    };
+  }).then(sendOk(res));
 });
 
 app.listen(3001, () => { console.log('Server Started!'); })

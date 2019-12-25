@@ -9,6 +9,11 @@ services:
          - webrtc-learning
          - haproxy-controller_haproxy-controller
 
+   redis:
+      image: redis:latest
+      networks:
+         - webrtc-learning
+
    server:
       image: benbergstein/webrtc-learning:latest
       ports:
@@ -18,6 +23,8 @@ services:
          - .:/app
       networks:
          - webrtc-learning
+      depends_on:
+         - redis
 
    client:
       image: benbergstein/webrtc-learning:latest
