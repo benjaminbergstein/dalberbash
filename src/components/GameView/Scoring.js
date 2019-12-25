@@ -8,7 +8,9 @@ import TextBox from '../TextBox';
 
 const CHECK = '✅';
 
-const Scoring = ({ game, WhenMyTurn }) => {
+const Scoring = ({ game, resetSelectedPrompt, WhenMyTurn }) => {
+  resetSelectedPrompt();
+
   const {
     name,
     round,

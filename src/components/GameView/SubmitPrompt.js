@@ -23,9 +23,10 @@ const SubmitPrompt = ({
   const newRandomPrompt = () => {
     setRandomPrompt(getRandomPrompt());
   }
+  const suggestedPromptText = `${randomPrompt[1]} (${randomPrompt[3]})`;
   const useRandomPrompt = () => {
     updateRound(game, round, {
-      prompt: randomPrompt[1],
+      prompt: suggestedPromptText,
       state: 'awaiting_answers',
     });
     setSelectedPrompt(randomPrompt);
@@ -44,7 +45,7 @@ const SubmitPrompt = ({
         <>
           <TextBox
             theme='blue'
-            text={`Suggested Prompt: ${randomPrompt[1]}`}
+            text={`Suggested Prompt: ${suggestedPromptText}`}
             marginTop='0.5em'
           />
           <TextBox theme='gray' text={randomPrompt[2]} />

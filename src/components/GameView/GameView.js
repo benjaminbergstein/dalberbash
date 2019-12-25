@@ -24,6 +24,7 @@ const GameView = ({
   getRandomPrompt,
   setSelectedPrompt,
   selectedPrompt,
+  resetSelectedPrompt,
 }) => {
   const {
     name,
@@ -51,6 +52,7 @@ const GameView = ({
         setWatchGamePaused={setWatchGamePaused}
         getRandomPrompt={getRandomPrompt}
         setSelectedPrompt={setSelectedPrompt}
+        resetSelectedPrompt={resetSelectedPrompt}
         selectedPrompt={selectedPrompt}
         WhenMyTurn={ConditionalComponent(isMyTurn)}
         WhenNotMyTurn={ConditionalComponent(!isMyTurn)}
