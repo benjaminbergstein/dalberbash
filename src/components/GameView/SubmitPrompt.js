@@ -34,15 +34,23 @@ const SubmitPrompt = ({
 
   return (
     <>
-      <CollectionForm
-        prompt="What's the prompt?"
-        handleSubmit={handleSubmit}
-        field={prompt}
-        setField={setPrompt}
-      />
+      {selectedPrompt && (
+        <TextBox
+          theme='blue'
+          text={`Submitting Prompt "${suggestedPromptText}"...`}
+          marginTop='0.5em'
+        />
+      )}
 
       {!selectedPrompt && (
         <>
+          <CollectionForm
+            prompt="What's the prompt?"
+            handleSubmit={handleSubmit}
+            field={prompt}
+            setField={setPrompt}
+          />
+
           <TextBox
             theme='blue'
             text={`Suggested Prompt: ${suggestedPromptText}`}
