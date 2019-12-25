@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import TextBox from './TextBox';
 import Button from './Button';
 
+const EMPTY_RE = /^\s{0,}$/;
+
 const CollectionForm = ({
   prompt,
   field,
@@ -12,7 +14,7 @@ const CollectionForm = ({
   const [error, setError] = useState(false);
   const onSubmit = (e) => {
     e.preventDefault();
-    if (field === '') {
+    if (EMPTY_RE.test(field)) {
       setError('Please complete above field.');
     } else {
       handleSubmit();

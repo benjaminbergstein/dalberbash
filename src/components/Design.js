@@ -51,8 +51,11 @@ const TextBoxExamples = () => (
     <Example text='Basic TextBox' code={`<TextBox theme='gray' text='This is a TextBox' />`}>
       <TextBox theme='gray' text='This TextBox is green' />
     </Example>
-    <Example text='Green TextBox' code={`<TextBox theme='green' text='This TextBox is green' />`}>
-      <TextBox theme='green' text='This is a TextBox' />
+    <Example text='Green TextBox' code={`<TextBox theme='green' text='Success message' />`}>
+      <TextBox theme='green' text='Success message' />
+    </Example>
+    <Example text='Yellow TextBox' code={`<TextBox theme='yellow' text='Some Warning Text' />`}>
+      <TextBox theme='yellow' text='some Warning Text' />
     </Example>
   </>
 );

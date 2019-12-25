@@ -16,6 +16,11 @@ const COLORS = {
     color: '#666663',
     borderBottom: '1px solid #666663',
   },
+  'yellow': {
+    borderBottom: '1px solid #666633',
+    background: '#f9f3dd',
+    color: '#666633',
+  },
 };
 
 const PROFILES = {

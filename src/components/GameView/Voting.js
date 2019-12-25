@@ -11,6 +11,7 @@ const Voting = ({
   WhenMyTurn,
   WhenNotMyTurn,
 }) => {
+  const [error, setError] = useState(false);
   const [vote, setVote] = useState(-1);
   const [voteSubmitted, setVoteSubmitted] = useState(false);
   const { name, round, currentPlayer, players } = game;
@@ -24,8 +25,12 @@ const Voting = ({
   };
 
   const handleVoteSubmit = () => {
-    submitVote(name, currentPlayer, vote);
-    setVoteSubmitted(true);
+    if (vote === -1) {
+      setError('Vote for one of the above options by clicking it.');
+    } else {
+      submitVote(name, currentPlayer, vote);
+      setVoteSubmitted(true);
+    }
   };
 
   return (
@@ -48,10 +53,16 @@ const Voting = ({
             {voteOptions.map(([player, answer]) => (
               <Button
                 theme={vote === player ? 'green' : 'lightgray'}
-                onClick={() => setVote(player)}
+                onClick={() => {
+                  setError(false)
+                  setVote(player)
+                }}
                 text={answer}
               />
             ))}
+            {error !== false && (
+              <TextBox theme='yellow' text={error} marginTop='0.5em' />
+            )}
             <Button onClick={handleVoteSubmit} text='Submit' />
           </div>
         )}
