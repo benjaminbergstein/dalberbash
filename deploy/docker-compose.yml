@@ -15,6 +15,9 @@ services:
 
   redis:
     image: redis:latest
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ./data/redis:/data
     networks:
        - haproxy-controller_haproxy-controller
 
