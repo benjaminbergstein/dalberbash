@@ -6,7 +6,7 @@ endef
 
 build:
 	${COMPOSE_CMD} exec \
-		-e REACT_APP_HOST=http://dalberbash.benjaminbergstein.com \
+		-e REACT_APP_HOST=http://www.dalberbash.com \
 		app yarn build
 
 start:
