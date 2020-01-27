@@ -3,5 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "author": "Ben Bergstein",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "http-server . -p 3000"
+  },
+  "dependencies": {
+    "http-server": "^0.12.1"
+  }
 }

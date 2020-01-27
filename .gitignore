@@ -26,3 +26,4 @@ yarn-error.log*
 *.swo
 data/redis
 data/postgresql
+app/node_modules

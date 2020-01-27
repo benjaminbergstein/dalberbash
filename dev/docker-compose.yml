@@ -4,9 +4,9 @@ services:
     image: ${DOCKER_IMAGE}
     ports:
       - 3000:3000
-    command: ["server"]
+    command: ["start"]
     volumes:
-      - ./app:/server
+      - ./app:/app
     networks:
       - project
     depends_on:
