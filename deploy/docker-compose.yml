@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  app:
+    image: ${DOCKER_IMAGE}
+    command: ["server:prod"]
+    environment:
+      - REACT_APP_HOST
+    depends_on:
+       - redis
+    networks:
+       - haproxy-controller_haproxy-controller
+
+  postgres:
+    image: postgres
+    volumes:
+      - data/postgresql/deploy:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+       - haproxy-controller_haproxy-controller
+
+  redis:
+    image: redis:latest
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ./data/redis/deploy:/data

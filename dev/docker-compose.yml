@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+  server:
+    image: ${DOCKER_IMAGE}
+    ports:
+      - 3000:3000
+    command: ["server"]
+    volumes:
+      - ./app:/server
+    networks:
+      - project
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: redis:latest
+    networks:
+      - project
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ./data/redis/deploy:/data
+
+  postgres:
+    image: postgres
+    volumes:
+      - ./data/postgresql/dev:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - project
+
+networks:
+  project:
+    name: ${PROJECT}
