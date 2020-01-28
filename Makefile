@@ -1,11 +1,16 @@
 BASE_DIR = .
 include ${BASE_DIR}/shared.mk
 
+.PHONY: setup
+
 build:
-	make -C docker
+	${MAKE} -C docker
 
 start:
-	make -C dev
+	${MAKE} -C dev
 
 stop:
-	make -C dev undeploy
+	${MAKE} -C dev undeploy
+
+setup:
+	${MAKE} -C setup
