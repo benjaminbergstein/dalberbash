@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-  server:
+  app:
     image: ${DOCKER_IMAGE}
     ports:
       - 3000:3000
@@ -9,7 +9,20 @@ services:
       - ./app:/app
     networks:
       - project
+    environment:
+      - REACT_APP_HOST=http://production.wips.link:3001
+
+  server:
+    image: ${DOCKER_IMAGE}
+    ports:
+      - 3001:3001
+    command: ["server"]
+    volumes:
+      - ./app:/app
+    networks:
+      - project
     depends_on:
+      - app
       - redis
       - postgres
 

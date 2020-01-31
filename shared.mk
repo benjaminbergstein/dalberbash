@@ -1,4 +1,4 @@
-export PROJECT ?= boilerplate
+export PROJECT ?= dalberbash
 export APP_ENV ?= development
 
 DOCKER_REPO ?= benbergstein

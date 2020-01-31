@@ -1,13 +1,42 @@
 {
-  "name": "boilerplate",
-  "version": "1.0.0",
-  "main": "index.js",
-  "author": "Ben Bergstein",
-  "license": "MIT",
-  "scripts": {
-    "start": "http-server . -p 3000"
-  },
+  "name": "webrtc-learning",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "http-server": "^0.12.1"
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "deep-equal": "^1.1.1",
+    "express": "^4.17.1",
+    "isomorphic-fetch": "^2.2.1",
+    "nodemon": "^2.0.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.2.0",
+    "redis": "^2.8.0",
+    "webrtc": "^1.14.1"
+  },
+  "scripts": {
+    "server": "nodemon ./server/index.js",
+    "server:prod": "PORT=80 node ./server/index.js",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "db:reset": "node ./server/db/reset.js"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

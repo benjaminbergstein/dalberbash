@@ -12,5 +12,8 @@ start:
 stop:
 	${MAKE} -C dev undeploy
 
+logs:
+	${MAKE} -C dev logs
+
 setup:
 	${MAKE} -C setup
