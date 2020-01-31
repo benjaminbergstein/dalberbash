@@ -1,7 +1,7 @@
 BASE_DIR = ..
 include ${BASE_DIR}/shared.mk
 
-SERVICE ?= server
+SERVICE ?= app
 
 .PHONY: deploy
 
