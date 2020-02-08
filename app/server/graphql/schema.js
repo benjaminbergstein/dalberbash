@@ -84,6 +84,10 @@ const typeDefs = gql`
     calculateScores(gameId: String!): Game
     startGame(gameId: String!): Game
   }
+
+  type Subscription {
+    gameUpdated(gameId: String!): Game
+  }
 `
 
 module.exports = typeDefs;

@@ -1,3 +1,5 @@
+const { PubSub } = require('apollo-server');
+
 const {
   setGame,
   updateGame,
@@ -28,6 +30,16 @@ const NEW_GAME = {
   },
 };
 
+const pubsub = new PubSub();
+const GAME_UPDATED = 'GAME_UPDATED';
+
+const publishGameUpdate = (gameId) => (returnValue) => {
+  resolveGame(gameId).then((gameUpdated) => {
+    pubsub.publish([`${GAME_UPDATED}.${gameId}`], { gameUpdated });
+  });
+  return returnValue;
+};
+
 const resolvers = {
   Query: {
     games: () => getGameIds().then((gameIds) =>
@@ -56,7 +68,9 @@ const resolvers = {
           answers: {},
         },
       };
-    }).then(() => resolveGame(gameId)),
+    })
+    .then(publishGameUpdate(gameId))
+    .then(() => resolveGame(gameId)),
 
     setPrompt: (_, { gameId, prompt }) => updateGame(gameId, (game) => {
       const { round } = prompt;
@@ -67,13 +81,15 @@ const resolvers = {
           state: 'awaiting_answers',
         },
       };
-    }).then(() => resolveGame(gameId)),
+    })
+    .then(publishGameUpdate(gameId))
+    .then(() => resolveGame(gameId)),
 
     setPlayer: (_, { gameId, player }) => {
       const { player: playerNumber,  name } = player;
-      return setPlayer(gameId, playerNumber, name).then(() => {
-        return player;
-      });
+      return setPlayer(gameId, playerNumber, name)
+        .then(publishGameUpdate(gameId))
+        .then(() => player);
     },
 
     joinGame: (_, { gameId }) => getGame(gameId).then((game) => {
@@ -84,9 +100,11 @@ const resolvers = {
         players: currentPlayer,
       };
 
-      return setGame(gameId, updatedGame).then(() => ({
-        player: currentPlayer,
-      }))
+      return setGame(gameId, updatedGame)
+        .then(publishGameUpdate(gameId))
+        .then(() => ({
+          player: currentPlayer,
+        }))
     }),
 
     calculateScores,
@@ -105,7 +123,9 @@ const resolvers = {
           },
         },
       };
-    }).then(() => resolveGame(gameId)),
+    })
+    .then(publishGameUpdate(gameId))
+    .then(() => resolveGame(gameId)),
 
     submitVote: (_, { gameId, vote }) => updateGame(gameId, (game) => {
       const { round } = game;
@@ -122,7 +142,9 @@ const resolvers = {
           },
         },
       };
-    }).then(() => vote),
+    })
+    .then(publishGameUpdate(gameId))
+    .then(() => vote),
   },
 
   Game: {
@@ -138,6 +160,12 @@ const resolvers = {
     answers: ({ answers }) => Object.entries(answers || {}).map(([player, answer]) => ({ player, answer })),
     voteOptions: ({ voteOptions }) => (voteOptions || []).map(([player, answer]) => ({ player, answer })),
     votes: ({ votes }) => Object.entries(votes || {}).map(([player, vote]) => ({ player, vote })),
+  },
+
+  Subscription: {
+    gameUpdated: {
+      subscribe: (_, { gameId }) => pubsub.asyncIterator(`${GAME_UPDATED}.${gameId}`),
+    },
   },
 };
 
