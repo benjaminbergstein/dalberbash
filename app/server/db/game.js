@@ -25,8 +25,12 @@ const setGame = (id, data) => Promise.all([
 
 const getGame = (id) => get(key('game', id)).then(deserialize);
 const updateGame = (id, updater) =>
-  getGame(id).then((game) =>
-    setGame(id, updater(game)));
+  getGame(id).then((game) => {
+    console.log(updater(game));
+    return setGame(id, updater(game));
+  });
+
+const getGameIds = () => getSetMembers('games');
 
 // Returns hash of games keyed by gameId
 //
@@ -68,6 +72,7 @@ module.exports = {
   updateGame,
   getGame,
   getGames,
+  getGameIds,
   resetPlayers,
   setPlayer,
   getPlayers,

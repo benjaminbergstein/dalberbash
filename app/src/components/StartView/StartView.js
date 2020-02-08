@@ -14,32 +14,40 @@ import {
   fetchGames,
 } from '../../game';
 
-const CreateGame = ({ game, setGame, trackEvent }) => {
+import { useMutation } from '@apollo/react-hooks';
+import { FETCH_GAME, CREATE_GAME } from '../../graphql/queries';
+
+const CreateGame = ({ game, onGameCreated }) => {
+  const [createGameName, setCreateGameName] = useState('');
   const [error, setError] = useState(false);
+  const [createGame, { data }] = useMutation(CREATE_GAME, {
+    onCompleted: (data) => {
+      onGameCreated({
+        gameId: createGameName,
+        currentPlayer: 1,
+      });
+    },
+  });
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (game.name === '') {
+    if (createGameName === '') {
       setError('Please supply a name for this game');
       return;
     }
 
-    const updatedGame = {
-      ...game,
-      turnPlayer: 1,
-      round: DEFAULT_ROUND,
-      roundTallies: [],
-      state: 'waiting',
-    };
-    createGame(updatedGame)
-      .then(() => {
-        const { name, currentPlayer } = updatedGame;
-        window.location.hash = `${name}.${currentPlayer}`;
-        trackEvent('Game', 'Create');
-        setGame(updatedGame);
-      })
-      .catch(() => {});
+    createGame({
+      variables: {
+        gameInput: {
+          name: createGameName,
+        },
+      },
+    })
   };
+
+  const sanitizeName = (name) => name
+    .replace(' ', '-')
+    .replace(/[^-a-zA-Z1-9]/, '');
 
   return (
     <div>
@@ -49,14 +57,9 @@ const CreateGame = ({ game, setGame, trackEvent }) => {
           autoFocus={true}
           onChange={(e) => {
             setError(false);
-            setGame({
-              ...game,
-              players: 1,
-              currentPlayer: 1,
-              name: e.target.value.replace(' ', '-').replace(/[^-a-zA-Z1-9]/, '')
-            })
+            setCreateGameName(sanitizeName(e.target.value));
           }}
-          value={game.name}
+          value={createGameName}
         />
 
         {error !== false && (

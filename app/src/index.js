@@ -4,30 +4,31 @@ import App from './components/App';
 import Design from './components/Design';
 import * as serviceWorker from './serviceWorker';
 import { DEFAULT_GAME, fetchGame } from './game';
+import { ApolloProvider } from '@apollo/react-hooks';
+import ApolloClient from './graphql/ApolloClient';
+
+
+const [initialGameId, initialCurrentPlayer] = window.location.hash.substr(1).split('.');
 
 const mountApp = (initialGame) => {
-  ReactDOM.render(<App initialGame={initialGame} />, document.getElementById('root'));
+  const TheApp = () => (
+    <ApolloProvider client={ApolloClient}>
+      <App
+        initialGameId={initialGameId}
+        initialCurrentPlayer={initialCurrentPlayer}
+      />
+    </ApolloProvider>
+  );
+  ReactDOM.render(<TheApp />, document.getElementById('root'));
 };
 
-const [name, currentPlayer] = window.location.hash.substr(1).split('.');
 
 const isDesignPage = window.location.pathname === '/design';
 
 if (isDesignPage) {
   ReactDOM.render(<Design />, document.getElementById('root'));
-} else if (name && currentPlayer) {
-  fetchGame(name)
-    .then((game) => {
-      mountApp({
-        ...game,
-        currentPlayer: parseInt(currentPlayer),
-      });
-    })
-    .catch(() => {
-      mountApp(DEFAULT_GAME);;
-    });
 } else {
-  mountApp(DEFAULT_GAME);;
+  mountApp();
 }
 
 // If you want your app to work offline and load faster, you can change
