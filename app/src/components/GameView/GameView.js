@@ -19,7 +19,7 @@ const ConditionalComponent = (condition) => ({ children }) => (condition && chil
 
 const GameView = ({
   game,
-  setGame,
+  currentPlayer,
   setWatchGamePaused,
   getRandomPrompt,
   setSelectedPrompt,
@@ -28,7 +28,6 @@ const GameView = ({
 }) => {
   const {
     name,
-    currentPlayer,
     turnPlayer,
     round,
   } = game;
@@ -47,7 +46,6 @@ const GameView = ({
       >
       <Component
         game={game}
-        setGame={setGame}
         isMyTurn={isMyTurn}
         setWatchGamePaused={setWatchGamePaused}
         getRandomPrompt={getRandomPrompt}
@@ -61,4 +59,4 @@ const GameView = ({
   );
 };
 
-export default withPromptSuggestions(withWatchGame(GameView));
+export default withPromptSuggestions(GameView);

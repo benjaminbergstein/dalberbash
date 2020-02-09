@@ -15,16 +15,21 @@ import {
 } from '../../game';
 
 import { useMutation } from '@apollo/react-hooks';
-import { FETCH_GAME, CREATE_GAME } from '../../graphql/queries';
+import {
+  FETCH_GAME,
+  CREATE_GAME,
+  JOIN_GAME,
+} from '../../graphql/queries';
 
-const CreateGame = ({ game, onGameCreated }) => {
+const CreateGame = ({ game, onGameJoined }) => {
   const [createGameName, setCreateGameName] = useState('');
   const [error, setError] = useState(false);
   const [createGame, { data }] = useMutation(CREATE_GAME, {
     onCompleted: (data) => {
-      onGameCreated({
+      onGameJoined({
+        isCreator: true,
         gameId: createGameName,
-        currentPlayer: 1,
+        player: 1,
       });
     },
   });
@@ -71,12 +76,22 @@ const CreateGame = ({ game, onGameCreated }) => {
   )
 };
 
-const GameList = ({ games, setGame }) => {
+const GameList = ({ games, onGameJoined }) => {
+  const [joinGame, { data, called, loading }] = useMutation(JOIN_GAME);
   const handleClick = (name, game) => () => {
-    joinGame(name, game).then((serverGame) => {
-      const { name, currentPlayer } = serverGame;
-      window.location.hash = `${name}.${currentPlayer}`;
-      setGame(serverGame);
+    joinGame({
+      variables: {
+        gameId: name,
+      },
+      update: (cache, { data }) => {
+        const { joinGame } = data;
+        const { player } = joinGame;
+        onGameJoined({
+          isCreator: true,
+          gameId: name,
+          player,
+        });
+      },
     });
   };
 

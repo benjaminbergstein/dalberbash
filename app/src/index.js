@@ -15,7 +15,7 @@ const mountApp = (initialGame) => {
     <ApolloProvider client={ApolloClient}>
       <App
         initialGameId={initialGameId}
-        initialCurrentPlayer={initialCurrentPlayer}
+        initialCurrentPlayer={parseInt(initialCurrentPlayer)}
       />
     </ApolloProvider>
   );

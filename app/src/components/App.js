@@ -6,33 +6,37 @@ import { useLazyQuery, useSubscription } from '@apollo/react-hooks';
 import { FETCH_GAME, WATCH_GAME } from '../graphql/queries';
 import withTrackEvent from '../containers/withTrackEvent';
 
-const withGameUpdates = (Component) => ({ gameId, game, ...props }) => {
+const COMPONENT_MAP = {
+  waiting: PreGameView,
+  playing: GameView,
+};
+
+const Game = ({ gameId, game: fetchedGame, ...props }) => {
   const { data, loading } = useSubscription(WATCH_GAME, {
     variables: { gameId },
   });
 
-  return <Component
-    game={(data || {}).gameUpdated || game}
+  const game = data ? data.gameUpdated : fetchedGame;
+  const { state } = game;
+
+  const GameComponent = COMPONENT_MAP[state];
+  return <GameComponent
+    game={game}
     gameLoading={loading}
     {...props}
   />;
-};
-
-const COMPONENT_MAP = {
-  not_joined: StartView,
-  waiting: withGameUpdates(PreGameView),
-  playing: withGameUpdates(GameView),
 };
 
 const App = ({ initialGameId, initialCurrentPlayer, trackEvent }) => {
   const [gameId, setGameId] = useState(initialGameId);
   const [currentPlayer, setCurrentPlayer] = useState(initialCurrentPlayer)
 
-  const onGameCreated = ({ gameId, currentPlayer }) => {
+  const onGameJoined = ({ isCreator, gameId, player }) => {
+    console.log('foo');
     setGameId(gameId);
-    setCurrentPlayer(currentPlayer);
-    window.location.hash = `${gameId}.1`;
-    trackEvent('Game', 'Create');
+    setCurrentPlayer(player);
+    window.location.hash = `${gameId}.${player}`;
+    trackEvent('Game', isCreator ? 'Create' : 'Join');
   };
 
   const [loadGame, { called, loading, error, data }] = useLazyQuery(FETCH_GAME, {
@@ -44,16 +48,17 @@ const App = ({ initialGameId, initialCurrentPlayer, trackEvent }) => {
   if (!called && gameId) loadGame();
   if (called && loading) return null;
 
-  const { game } = called && data ? data : { game: { state: 'not_joined' } };
+  if (called && data) {
+    const { game } = data;
 
-  const Component = COMPONENT_MAP[game.state];
-
-  return <Component
-    gameId={gameId}
-    currentPlayer={currentPlayer}
-    game={game}
-    onGameCreated={onGameCreated}
-  />;
+    return <Game
+      gameId={gameId}
+      game={game}
+      currentPlayer={currentPlayer}
+    />;
+  } else {
+    return <StartView onGameJoined={onGameJoined} />;
+  }
 };
 
 export default withTrackEvent(App);

@@ -27,6 +27,9 @@ const NEW_GAME = {
   players: 1,
   round: {
     votes: {},
+    answers: {},
+    state: 'awaiting_prompt',
+    prompt: undefined,
   },
 };
 
@@ -64,6 +67,7 @@ const resolvers = {
       return {
         ...game,
         state: "playing",
+        turnPlayer: 1,
         round: {
           state: "awaiting_prompt",
           answers: {},
