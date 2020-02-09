@@ -132,6 +132,21 @@ const resolvers = {
     .then(publishGameUpdate(gameId))
     .then(() => resolveGame(gameId)),
 
+    startVoting: (_, { gameId }) => updateGame(gameId, (game) => {
+      const { round } = game;
+      const { votes } = round;
+
+      return {
+        ...game,
+        round: {
+          ...round,
+          state: 'voting',
+        },
+      };
+    })
+    .then(publishGameUpdate(gameId))
+    .then(() => resolveGame(gameId)),
+
     submitVote: (_, { gameId, vote }) => updateGame(gameId, (game) => {
       const { round } = game;
       const { votes } = round;

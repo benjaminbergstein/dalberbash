@@ -4,7 +4,6 @@ import SubmitPrompt from './SubmitPrompt';
 
 const AwaitingPrompt = ({
   game,
-  setGame,
   getRandomPrompt,
   selectedPrompt,
   setSelectedPrompt,
@@ -15,7 +14,6 @@ const AwaitingPrompt = ({
     <WhenMyTurn>
       <SubmitPrompt
         game={game}
-        setGame={setGame}
         getRandomPrompt={getRandomPrompt}
         setSelectedPrompt={setSelectedPrompt}
         selectedPrompt={selectedPrompt}

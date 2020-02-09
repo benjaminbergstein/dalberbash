@@ -2,74 +2,65 @@ import React, { useState, useEffect } from 'react';
 import CollectionForm from '../CollectionForm';
 import Button from '../Button';
 import TextBox from '../TextBox';
-import {
-  updateGame,
-  submitAnswer,
-} from '../../game';
+import { useMutation } from '@apollo/react-hooks';
+import { SUBMIT_ANSWER, START_VOTING } from '../../graphql/queries';
 import { shuffle } from '../../utilities';
 
 const CollectAnswers = ({
   game,
-  setGame,
-  setWatchGamePaused,
+  currentPlayer,
   selectedPrompt,
   WhenMyTurn,
   WhenNotMyTurn
 }) => {
-  const [answer, setAnswer] = useState(selectedPrompt ? selectedPrompt[2] : '');
-  const [hasSubmitted, setHasSubmitted] = useState(!!selectedPrompt);
   const {
-    name,
-    currentPlayer,
+    name: gameId,
+    countPlayers,
     turnPlayer,
     players,
     round,
   } = game;
-
-  useEffect(() => { setWatchGamePaused(!hasSubmitted) }, [hasSubmitted]);
+  const [answer, setAnswer] = useState(selectedPrompt ? selectedPrompt[2] : '');
+  const [submitAnswer, { called: hasSubmitted }] = useMutation(SUBMIT_ANSWER, {
+    variables: {
+      gameId,
+      answerInput: {
+        player: currentPlayer,
+        answer,
+      },
+    },
+  })
 
   const { prompt, answers } = round;
-  const answerCount = Object.entries(answers).length;
-  const everyoneAnswered = answerCount === players;
-
-  const handleSubmit = () => {
-    submitAnswer(name, currentPlayer, answer);
-    setHasSubmitted(true);
-  };
+  const answerCount = answers.length;
+  const everyoneAnswered = answerCount === countPlayers;
+  const hasCurrentPlayerAnswered = answers.some(({ player }) => player === currentPlayer) || hasSubmitted;
 
   useEffect(() => {
     if (selectedPrompt) {
-      handleSubmit();
+      submitAnswer();
     }
   });
 
-  const startVoting = () => {
-    updateGame({
-      ...game,
-      round: {
-        ...round,
-        state: 'voting',
-        votes: {},
-        voteOptions: shuffle(Object.entries(answers)),
-      },
-    });
-  };
+  const [startVoting] = useMutation(START_VOTING, {
+    variables: { gameId },
+  });
 
   return (
     <>
       <WhenMyTurn>
-        {!hasSubmitted && (
+        {!hasCurrentPlayerAnswered && (
           <CollectionForm
             prompt="What's the real answer?"
-            handleSubmit={handleSubmit}
+            handleSubmit={submitAnswer}
             field={answer}
             setField={setAnswer}
           />
         )}
-        {hasSubmitted && (
+        {hasCurrentPlayerAnswered && (
           <>
             <TextBox theme='gray' text={`${answerCount} answer(s)`} />
-            {Object.entries(answers).map(([player, answer]) => (
+            {answers.map(({ answer }) => (
               <TextBox theme='green' text={answer} />
             ))}
             {everyoneAnswered && (
@@ -81,15 +72,15 @@ const CollectAnswers = ({
 
       <WhenNotMyTurn>
         <TextBox theme='gray' text={`The prompt is: "${prompt}"`} />
-        {!hasSubmitted && (
+        {!hasCurrentPlayerAnswered && (
           <CollectionForm
             prompt="What's your answer?"
-            handleSubmit={handleSubmit}
+            handleSubmit={submitAnswer}
             field={answer}
             setField={setAnswer}
           />
         )}
-        {hasSubmitted && (
+        {hasCurrentPlayerAnswered && (
           <TextBox theme='green' text='Waiting for other players...' />
         )}
       </WhenNotMyTurn>

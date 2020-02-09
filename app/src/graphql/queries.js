@@ -8,9 +8,14 @@ fragment GameAttributes on Game {
   turnPlayer
   round {
     state
+    prompt
     votes {
       player
       vote
+    }
+    answers {
+      player
+      answer
     }
   }
   roundTallies {
@@ -73,11 +78,37 @@ mutation SetPlayer($gameId: String!, $playerInput: PlayerInput!) {
   }
 }`
 
+const SUBMIT_PROMPT = gql`
+mutation SubmitPrompt($gameId: String!, $prompt: String!) {
+  setPrompt(gameId: $gameId, prompt: $prompt) {
+    name
+  }
+}`
+
+const SUBMIT_ANSWER = gql`
+mutation SubmitAnswer($gameId: String!, $answerInput: AnswerInput!) {
+  submitAnswer(gameId: $gameId, answer: $answerInput) {
+    name
+  }
+}`
+
+const START_VOTING = gql`
+mutation StartVoting($gameId: String!) {
+  startVoting(gameId: $gameId) {
+    name
+    state
+  }
+}`
+
+
 export {
   CREATE_GAME,
   FETCH_GAME,
   JOIN_GAME,
   START_GAME,
+  START_VOTING,
   SET_PLAYER,
   WATCH_GAME,
+  SUBMIT_PROMPT,
+  SUBMIT_ANSWER,
 };

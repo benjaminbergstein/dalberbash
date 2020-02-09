@@ -1,5 +1,5 @@
 const { getGames, getGame } = require('./game.js');
 
 getGames().then((gameIds) => {
-  console.log(gameIds);
+  console.log(JSON.stringify(gameIds));
 });

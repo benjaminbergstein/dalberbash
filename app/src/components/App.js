@@ -32,7 +32,6 @@ const App = ({ initialGameId, initialCurrentPlayer, trackEvent }) => {
   const [currentPlayer, setCurrentPlayer] = useState(initialCurrentPlayer)
 
   const onGameJoined = ({ isCreator, gameId, player }) => {
-    console.log('foo');
     setGameId(gameId);
     setCurrentPlayer(player);
     window.location.hash = `${gameId}.${player}`;

@@ -5,7 +5,6 @@ import AwaitingPrompt from './AwaitingPrompt';
 import CollectAnswers from './CollectAnswers';
 import Voting from './Voting';
 import Scoring from './Scoring';
-import withWatchGame from '../../containers/withWatchGame';
 import withPromptSuggestions from '../../containers/withPromptSuggestions';
 
 const ROUND_COMPONENTS = {
@@ -46,6 +45,7 @@ const GameView = ({
       >
       <Component
         game={game}
+        currentPlayer={currentPlayer}
         isMyTurn={isMyTurn}
         setWatchGamePaused={setWatchGamePaused}
         getRandomPrompt={getRandomPrompt}

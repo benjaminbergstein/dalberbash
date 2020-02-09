@@ -76,13 +76,14 @@ const typeDefs = gql`
 
   type Mutation {
     createGame(game: GameInput!): Game
-    setPrompt(gameId: String!, prompt: String!): Game
-    submitAnswer(gameId: String, answer: AnswerInput!): Game
     setPlayer(gameId: String!, player: PlayerInput!): Player
+    startGame(gameId: String!): Game
+    setPrompt(gameId: String!, prompt: String!): Game
+    submitAnswer(gameId: String!, answer: AnswerInput!): Game
+    startVoting(gameId: String!): Game
     submitVote(gameId: String!, vote: VoteInput!): Vote
     joinGame(gameId: String!): Player
     calculateScores(gameId: String!): Game
-    startGame(gameId: String!): Game
   }
 
   type Subscription {
