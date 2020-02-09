@@ -35,6 +35,7 @@ const GAME_UPDATED = 'GAME_UPDATED';
 
 const publishGameUpdate = (gameId) => (returnValue) => {
   resolveGame(gameId).then((gameUpdated) => {
+    console.log('publishing:', gameUpdated);
     pubsub.publish([`${GAME_UPDATED}.${gameId}`], { gameUpdated });
   });
   return returnValue;

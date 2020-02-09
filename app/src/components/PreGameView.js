@@ -3,32 +3,46 @@ import CollectionForm from './CollectionForm';
 import Container from './Container';
 import TextBox from './TextBox';
 import Button from './Button';
-import withWatchGame from '../containers/withWatchGame';
 import withTrackEvent from '../containers/withTrackEvent';
-import { startGame, setPlayer } from '../game';
+import { useMutation } from '@apollo/react-hooks';
+import { START_GAME, SET_PLAYER } from '../graphql/queries';
 
-const PreGameView = ({ game, trackEvent }) => {
+const PreGameView = ({ currentPlayer, game, trackEvent }) => {
   const {
-    currentPlayer,
-    players,
+    countPlayers,
     name,
-    playerNames,
+    players,
   } = game;
-  const [playerName, setPlayerName] = useState(`Player ${currentPlayer}`);
-  const [playerNameSubmitted, setPlayerNameSubmitted] = useState(false);
+
+  const currentPlayerDetails = players.find(({ player }) => parseInt(player) === parseInt(currentPlayer));
+  const { name: currentPlayerName } =  currentPlayerDetails || {};
+
+  const playerNames = players.map(({ name }) => name);
+  const [playerName, setPlayerName] = useState(currentPlayerDetails ? currentPlayerName : `Player ${currentPlayer}`);
+
+  const [setPlayer, { called: playerNameSubmitted }] = useMutation(SET_PLAYER, {
+    onComplete: () => trackEvent('Player', 'Set Name'),
+    variables: {
+      gameId: name,
+      playerInput: {
+        player: parseInt(currentPlayer),
+        name: playerName,
+      }
+    }
+  });
+  const playerNameSet = playerNameSubmitted || currentPlayerDetails;
+
+  const [startGame, { called: gameStarted }] = useMutation(START_GAME, {
+    variables: {
+      gameId: name,
+    },
+  });
+
   const handleClick = () => {
     trackEvent('Game', 'Start');
     trackEvent('Round', 'Start');
     startGame(name);
   };
-  const handleSubmit = () => setPlayer({
-    name,
-    player: currentPlayer,
-    playerName,
-  }).then(() => {
-    trackEvent('Player', 'Set Name');
-    setPlayerNameSubmitted(true);
-  });
   const playerNameValues = Object.values(playerNames || {});
   const unnamedPlayers = players - playerNameValues.length;
 
@@ -37,7 +51,7 @@ const PreGameView = ({ game, trackEvent }) => {
       title={`Game "${name}"`}
       subtitle={'Waiting for players to join'}
     >
-      <TextBox theme='blue' text={`${players} player(s) currently joined`} />
+      <TextBox theme='blue' text={`${countPlayers} player(s) currently joined`} />
       {playerNameValues.map((playerName) => (
         <TextBox theme='gray' text={playerName} />
       ))}
@@ -45,19 +59,19 @@ const PreGameView = ({ game, trackEvent }) => {
         <TextBox theme='gray' text={`${unnamedPlayers} unnamed players(s)`} />
       )}
       {currentPlayer === 1 && (
-        <Button onClick={handleClick} text='Start!' />
+        <Button onClick={startGame} text='Start!' />
       )}
 
-      {!playerNameSubmitted && (
+      {!playerNameSet && (
         <CollectionForm
           marginTop='1em'
           prompt="How do you wish to known?"
-          handleSubmit={handleSubmit}
+          handleSubmit={setPlayer}
           field={playerName}
           setField={setPlayerName}
         />
       )}
-      {playerNameSubmitted && (
+      {playerNameSet && (
         <TextBox
           theme='blue'
           text={`Name set to "${playerName}!`}
@@ -68,4 +82,4 @@ const PreGameView = ({ game, trackEvent }) => {
   )
 };
 
-export default withTrackEvent(withWatchGame(PreGameView));
+export default withTrackEvent(PreGameView);
