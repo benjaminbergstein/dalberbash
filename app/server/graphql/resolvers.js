@@ -44,6 +44,19 @@ const publishGameUpdate = (gameId) => (returnValue) => {
   return returnValue;
 };
 
+const setRoundState = (state) => (game) => {
+  const { round } = game;
+  const { votes } = round;
+
+  return {
+    ...game,
+    round: {
+      ...round,
+      state,
+    },
+  };
+};
+
 const resolvers = {
   Query: {
     games: () => getGameIds().then((gameIds) =>
@@ -132,18 +145,17 @@ const resolvers = {
     .then(publishGameUpdate(gameId))
     .then(() => resolveGame(gameId)),
 
-    startVoting: (_, { gameId }) => updateGame(gameId, (game) => {
-      const { round } = game;
-      const { votes } = round;
+    startVoting: (_, { gameId }) => updateGame(
+      gameId,
+      setRoundState('voting')
+    )
+    .then(publishGameUpdate(gameId))
+    .then(() => resolveGame(gameId)),
 
-      return {
-        ...game,
-        round: {
-          ...round,
-          state: 'voting',
-        },
-      };
-    })
+    endVoting: (_, { gameId }) => updateGame(
+      gameId,
+      setRoundState('scoring')
+    )
     .then(publishGameUpdate(gameId))
     .then(() => resolveGame(gameId)),
 

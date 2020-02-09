@@ -78,11 +78,12 @@ const typeDefs = gql`
     createGame(game: GameInput!): Game
     setPlayer(gameId: String!, player: PlayerInput!): Player
     startGame(gameId: String!): Game
+    joinGame(gameId: String!): Player
     setPrompt(gameId: String!, prompt: String!): Game
     submitAnswer(gameId: String!, answer: AnswerInput!): Game
     startVoting(gameId: String!): Game
     submitVote(gameId: String!, vote: VoteInput!): Vote
-    joinGame(gameId: String!): Player
+    endVoting(gameId: String!): Game
     calculateScores(gameId: String!): Game
   }
 

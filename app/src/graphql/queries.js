@@ -60,7 +60,7 @@ query FetchGame($gameId: String!) {
   }
 }
 
-${GAME_ATTRIBUTES}`
+${GAME_ATTRIBUTES}`;
 
 const START_GAME = gql`
 mutation StartGame($gameId: String!) {
@@ -68,7 +68,7 @@ mutation StartGame($gameId: String!) {
     name
     state
   }
-}`
+}`;
 
 const SET_PLAYER = gql`
 mutation SetPlayer($gameId: String!, $playerInput: PlayerInput!) {
@@ -76,21 +76,21 @@ mutation SetPlayer($gameId: String!, $playerInput: PlayerInput!) {
     player
     name
   }
-}`
+}`;
 
 const SUBMIT_PROMPT = gql`
 mutation SubmitPrompt($gameId: String!, $prompt: String!) {
   setPrompt(gameId: $gameId, prompt: $prompt) {
     name
   }
-}`
+}`;
 
 const SUBMIT_ANSWER = gql`
 mutation SubmitAnswer($gameId: String!, $answerInput: AnswerInput!) {
   submitAnswer(gameId: $gameId, answer: $answerInput) {
     name
   }
-}`
+}`;
 
 const START_VOTING = gql`
 mutation StartVoting($gameId: String!) {
@@ -98,17 +98,34 @@ mutation StartVoting($gameId: String!) {
     name
     state
   }
-}`
+}`;
 
+const SUBMIT_VOTE = gql`
+mutation SubmitVote($gameId: String!, $voteInput: VoteInput!) {
+  submitVote(gameId: $gameId, vote: $voteInput) {
+    player
+    vote
+  }
+}`;
+
+const END_VOTING = gql`
+mutation EndVoting($gameId: String!) {
+  endVoting(gameId: $gameId) {
+    name
+    state
+  }
+}`;
 
 export {
   CREATE_GAME,
   FETCH_GAME,
   JOIN_GAME,
   START_GAME,
-  START_VOTING,
   SET_PLAYER,
   WATCH_GAME,
   SUBMIT_PROMPT,
   SUBMIT_ANSWER,
+  START_VOTING,
+  SUBMIT_VOTE,
+  END_VOTING,
 };
