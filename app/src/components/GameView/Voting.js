@@ -2,16 +2,21 @@ import React, { useState, useMemo } from 'react';
 import Button from '../Button';
 import TextBox from '../TextBox';
 import { useMutation } from '@apollo/react-hooks';
-import { SUBMIT_VOTE, END_VOTING } from '../../graphql/queries';
+import { SUBMIT_VOTE, CALCULATE_SCORES } from '../../graphql/queries';
 import { shuffle } from '../../utilities';
+import turnHelper from './turnHelper';
+import useGame from '../../hooks/useGame';
 
 const Voting = ({
-  game,
+  gameId,
   currentPlayer,
-  WhenMyTurn,
-  WhenNotMyTurn,
 }) => {
-  const { name: gameId, round, countPlayers } = game;
+  const { game, subscribe } = useGame(gameId);
+  subscribe();
+
+  const { WhenMyTurn, WhenNotMyTurn } = turnHelper(currentPlayer, game);
+
+  const { round, countPlayers } = game;
   const { answers, votes } = round;
 
   const [error, setError] = useState(false);
@@ -29,7 +34,7 @@ const Voting = ({
 
   const hasPlayerVoted = voteSubmitted || votes.some(({ player }) => player === currentPlayer);
 
-  const [endVoting] = useMutation(END_VOTING, {
+  const [calculateScores] = useMutation(CALCULATE_SCORES, {
     variables: { gameId },
   });
 
@@ -52,7 +57,7 @@ const Voting = ({
         <TextBox theme='gray' text='Waiting for everyone to vote' />
         <TextBox theme='green' text={`${voteCount} vote(s)`} />
         {everyoneVoted && (
-          <Button onClick={endVoting} text='End Voting' />
+          <Button onClick={calculateScores} text='End Voting' />
         )}
       </WhenMyTurn>
 

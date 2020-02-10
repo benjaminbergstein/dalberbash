@@ -7,19 +7,17 @@ import { useMutation } from '@apollo/react-hooks';
 import { SUBMIT_PROMPT } from '../../graphql/queries';
 
 const SubmitPrompt = ({
-  game,
+  gameId,
   getRandomPrompt,
   selectedPrompt,
   setSelectedPrompt,
   trackEvent,
 }) => {
-  const { name: gameId } = game;
   const [prompt, setPrompt] = useState(selectedPrompt[1] || '');
   const [submitPrompt, { called }] = useMutation(SUBMIT_PROMPT, {
     variables: { gameId, prompt },
     onComplete: () => trackEvent('Prompt', 'Submit'),
   });
-  const { round } = game;
   const [randomPrompt, setRandomPrompt] = useState(getRandomPrompt());
   const newRandomPrompt = () => {
     setRandomPrompt(getRandomPrompt());

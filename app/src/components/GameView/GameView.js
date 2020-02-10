@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import Container from '../Container';
+import Header from '../Header';
+import Footer from '../Footer';
 import SubmitPrompt from './SubmitPrompt';
 import AwaitingPrompt from './AwaitingPrompt';
 import CollectAnswers from './CollectAnswers';
 import Voting from './Voting';
 import Scoring from './Scoring';
 import withPromptSuggestions from '../../containers/withPromptSuggestions';
+import turnHelper from './turnHelper';
+import useGame from '../../hooks/useGame';
 
 const ROUND_COMPONENTS = {
   awaiting_prompt: [AwaitingPrompt, 'Choose Prompt'],
@@ -14,48 +17,41 @@ const ROUND_COMPONENTS = {
   scoring: [Scoring, 'Point Tally'],
 };
 
-const ConditionalComponent = (condition) => ({ children }) => (condition && children);
-
 const GameView = ({
-  game,
+  gameId,
   currentPlayer,
-  setWatchGamePaused,
   getRandomPrompt,
   setSelectedPrompt,
   selectedPrompt,
   resetSelectedPrompt,
 }) => {
-  const {
-    name,
-    turnPlayer,
-    round,
-  } = game;
-
-  const isMyTurn = turnPlayer === currentPlayer;
+  const { game } = useGame(gameId, true);
+  const { turnPlayer, round } = game;
+  const { isMyTurn } = turnHelper(currentPlayer, game);
   const [Component, title] = ROUND_COMPONENTS[round.state];
 
   return (
-    <Container
-        title={`Game "${name}"`}
-        subtitle={`You are player ${currentPlayer}`}
-        footer={{
-          primaryText: isMyTurn ? 'Your turn!' : `Player ${turnPlayer}'s Turn.`,
-          secondaryText: title,
-        }}
-      >
-      <Component
-        game={game}
-        currentPlayer={currentPlayer}
-        isMyTurn={isMyTurn}
-        setWatchGamePaused={setWatchGamePaused}
-        getRandomPrompt={getRandomPrompt}
-        setSelectedPrompt={setSelectedPrompt}
-        resetSelectedPrompt={resetSelectedPrompt}
-        selectedPrompt={selectedPrompt}
-        WhenMyTurn={ConditionalComponent(isMyTurn)}
-        WhenNotMyTurn={ConditionalComponent(!isMyTurn)}
+    <div style={{
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+      <Header title={`Game "${gameId}"`} subtitle={`You are player ${currentPlayer}`} />
+      <div style={{ flex: '1', overflowY: 'scroll', marginBottom: 'auto' }}>
+        <Component
+          gameId={gameId}
+          currentPlayer={currentPlayer}
+          getRandomPrompt={getRandomPrompt}
+          setSelectedPrompt={setSelectedPrompt}
+          resetSelectedPrompt={resetSelectedPrompt}
+          selectedPrompt={selectedPrompt}
+        />
+      </div>
+      <Footer
+        primaryText={isMyTurn ? 'Your turn!' : `Player ${turnPlayer}'s Turn.`}
+        secondaryText={title}
       />
-    </Container>
+    </div>
   );
 };
 

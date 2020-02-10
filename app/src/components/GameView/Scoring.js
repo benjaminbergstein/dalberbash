@@ -1,77 +1,63 @@
 import React, { useState } from 'react';
-import {
-  DEFAULT_ROUND,
-  updateGame,
-} from '../../game'
 import withTrackEvent from '../../containers/withTrackEvent';
 import Button from '../Button';
 import TextBox from '../TextBox';
+import { useMutation } from '@apollo/react-hooks';
+import { START_NEW_ROUND } from '../../graphql/queries';
+import turnHelper from './turnHelper';
+import useGame from '../../hooks/useGame';
 
 const CHECK = '✅';
 
 const Scoring = ({
-  game,
+  gameId,
+  currentPlayer,
   resetSelectedPrompt,
   trackEvent,
-  WhenMyTurn,
 }) => {
+  const { game, subscribe } = useGame(gameId);
+  subscribe();
+
+  const { WhenMyTurn } = turnHelper(currentPlayer, game);
+
   resetSelectedPrompt();
 
   const {
-    name,
     round,
-    currentPlayer,
+    countPlayers,
     players,
     turnPlayer,
     roundTallies,
-    playerNames,
   } = game;
-  const { answers, voteOptions, votes } = round;
 
-  const correctAnswer = (player) => parseInt(votes[player]) === turnPlayer;
-  const isTurnPlayer = (player) => {
-    return parseInt(player) === turnPlayer;
-  };
-  const votesFor = (player) => {
-    return Object.values(votes).reduce((count, answerNumber) => {
-      return player === answerNumber ? count + 1 : count;
-    }, 0);
-  };
-
-  const pointsForPlayer = (player) => {
-    if (isTurnPlayer(player)) {
-      return votesFor(player) === 0 ? 2 : 0
-    } else {
-      return (correctAnswer(player) ? 2 : 0) + votesFor(player);
-    }
-  };
-
-  const points = Object.entries(answers).reduce((totals, [player]) => {
-    return { ...totals, [player]: pointsForPlayer(player) };
-  }, {});
-
-  const updatedRoundTallies = [
-    ...roundTallies,
-    points,
-  ];
-
-  const totals = updatedRoundTallies.reduce((t1, tally) => {
-    return Object.entries(t1).reduce((t2, [player, score]) => ({
-      ...t2,
-      [player]: score + tally[player],
-    }), {});
+  const [startNewRound, { called: nextRoundStarted }] = useMutation(START_NEW_ROUND, {
+    variables: { gameId },
   });
 
+  if (nextRoundStarted) return null;
+
+  const playerNames = players.reduce((names, { player, name }) => ({
+    ...names,
+    [player]: name || `Player ${player}`,
+  }), {});
+  const { answers, voteOptions, votes } = round;
+
+  const [totals, points] = roundTallies.reduce(([aggregate, lastRound], { playerTallies }, index, tallies) => {
+    return [playerTallies.reduce((t2, { player, points }) => {
+      if (!t2[player]) t2[player] = 0;
+
+      if (index === tallies.length - 1) {
+        lastRound[player] = points;
+      }
+
+      t2[player] = t2[player] + points;
+      return t2;
+    }, aggregate), lastRound];
+  }, [{}, {}]);
+
   const startNextRound = () => {
-    const newTurnPlayer = (turnPlayer % players) + 1;
-    const updatedGame = {
-      ...game,
-      turnPlayer: newTurnPlayer,
-      round: DEFAULT_ROUND,
-      roundTallies: updatedRoundTallies,
-    };
     trackEvent('Round', 'Start');
-    updateGame(updatedGame);
+    startNewRound();
   };
 
   const TitleCell = ({ children }) => (
@@ -91,6 +77,7 @@ const Scoring = ({
     .sort(([p1, s1], [p2, s2]) => s2 - s1)
     .map(([player]) => player);
 
+  console.log(totals, points);
   const getPlayerName = (player) => playerNames[player] || `Player ${player}`;
 
   return (
@@ -99,10 +86,6 @@ const Scoring = ({
         <div>
           <TextBox theme='green' marginTop='0.5rem' text={`${getPlayerName(player)}`} />
           <TextBox theme='gray' text={`${totals[player]} pts total, ${points[player]} this round.`} />
-          <TextBox theme='gray' text={`${votesFor(player)} votes.`} />
-          {correctAnswer(player) && (
-            <TextBox theme='gray' text={`${CHECK} Voted Correctly!`} />
-          )}
         </div>
       ))}
 

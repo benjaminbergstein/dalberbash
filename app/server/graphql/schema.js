@@ -83,8 +83,8 @@ const typeDefs = gql`
     submitAnswer(gameId: String!, answer: AnswerInput!): Game
     startVoting(gameId: String!): Game
     submitVote(gameId: String!, vote: VoteInput!): Vote
-    endVoting(gameId: String!): Game
     calculateScores(gameId: String!): Game
+    startNewRound(gameId: String!): Game
   }
 
   type Subscription {

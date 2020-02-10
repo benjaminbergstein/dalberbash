@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import CollectionForm from './CollectionForm';
 import Container from './Container';
 import TextBox from './TextBox';
@@ -6,8 +6,15 @@ import Button from './Button';
 import withTrackEvent from '../containers/withTrackEvent';
 import { useMutation } from '@apollo/react-hooks';
 import { START_GAME, SET_PLAYER } from '../graphql/queries';
+import useGame from '../hooks/useGame';
 
-const PreGameView = ({ currentPlayer, game, trackEvent }) => {
+const PreGameView = ({
+  gameId,
+  currentPlayer,
+  trackEvent
+}) => {
+  const { game, subscribe } = useGame(gameId);
+  subscribe();
   const {
     countPlayers,
     name,

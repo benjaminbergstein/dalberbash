@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
 import TextBox from '../TextBox';
 import SubmitPrompt from './SubmitPrompt';
+import turnHelper from './turnHelper';
+import useGame from '../../hooks/useGame';
 
 const AwaitingPrompt = ({
-  game,
+  gameId,
+  currentPlayer,
   getRandomPrompt,
   selectedPrompt,
   setSelectedPrompt,
-  WhenMyTurn,
-  WhenNotMyTurn,
-}) => (
-  <>
+}) => {
+  const { game, subscribe } = useGame(gameId);
+  subscribe();
+  const { WhenMyTurn, WhenNotMyTurn } = turnHelper(currentPlayer, game);
+
+  return <>
     <WhenMyTurn>
       <SubmitPrompt
-        game={game}
+        gameId={gameId}
         getRandomPrompt={getRandomPrompt}
         setSelectedPrompt={setSelectedPrompt}
         selectedPrompt={selectedPrompt}
@@ -24,6 +29,6 @@ const AwaitingPrompt = ({
       <TextBox theme='gray' text='Waiting for prompt...' />
     </WhenNotMyTurn>
   </>
-);
+};
 
 export default AwaitingPrompt;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { memo, useState, useEffect, useRef } from 'react';
 import TextBox from './TextBox';
 import Button from './Button';
 
@@ -11,14 +11,20 @@ const CollectionForm = ({
   handleSubmit,
   marginTop,
 }) => {
+  const [value, setValue] = useState(field);
   const [error, setError] = useState(false);
   const onSubmit = (e) => {
     e.preventDefault();
-    if (EMPTY_RE.test(field)) {
+    if (EMPTY_RE.test(value)) {
       setError('Please complete above field.');
     } else {
       handleSubmit();
     }
+  };
+
+  const handleChange = (e) => {
+    setValue(e.target.value);
+    setField(e.target.value);
   };
 
   return (
@@ -27,7 +33,6 @@ const CollectionForm = ({
       <form onSubmit={onSubmit}>
         <div style={{ padding: '0.5rem 1rem 0' }}>
           <textarea
-            autoFocus
             style={{
               boxSizing: 'border-box',
               width: '100%',
@@ -36,8 +41,8 @@ const CollectionForm = ({
               border: '1px solid #ccc',
               borderRadius: '3px',
             }}
-            onChange={(e) => { setField(e.target.value); }}
-            value={field}
+            onChange={handleChange}
+            value={value}
           />
         </div>
 

@@ -22,15 +22,19 @@ const resolveGame = (gameId) => getGame(gameId).then(({ players, ...game }) => (
   ...game,
 }));
 
+const NEW_ROUND = {
+  votes: {},
+  answers: {},
+  state: 'awaiting_prompt',
+  prompt: undefined,
+};
+
 const NEW_GAME = {
   state: 'waiting',
   players: 1,
-  round: {
-    votes: {},
-    answers: {},
-    state: 'awaiting_prompt',
-    prompt: undefined,
-  },
+  turnPlayer: 1,
+  roundTallies: [],
+  round: NEW_ROUND,
 };
 
 const pubsub = new PubSub();
@@ -80,7 +84,6 @@ const resolvers = {
       return {
         ...game,
         state: "playing",
-        turnPlayer: 1,
         round: {
           state: "awaiting_prompt",
           answers: {},
@@ -125,7 +128,9 @@ const resolvers = {
         }))
     }),
 
-    calculateScores,
+    calculateScores: (_, { gameId }) => calculateScores(gameId)
+    .then(publishGameUpdate(gameId))
+    .then(() => resolveGame(gameId)),
 
     submitAnswer: (_, { gameId, answer }) => updateGame(gameId, (game) => {
       const { player, answer: playerAnswer } = answer;
@@ -152,10 +157,16 @@ const resolvers = {
     .then(publishGameUpdate(gameId))
     .then(() => resolveGame(gameId)),
 
-    endVoting: (_, { gameId }) => updateGame(
-      gameId,
-      setRoundState('scoring')
-    )
+    startNewRound: (_, { gameId }) => updateGame(gameId, (game) => {
+      const { turnPlayer, players: countPlayers } = game;
+      console.log(turnPlayer, countPlayers);
+
+      return {
+        ...game,
+        turnPlayer: (turnPlayer % countPlayers) + 1,
+        round: NEW_ROUND,
+      };
+    })
     .then(publishGameUpdate(gameId))
     .then(() => resolveGame(gameId)),
 

@@ -108,9 +108,22 @@ mutation SubmitVote($gameId: String!, $voteInput: VoteInput!) {
   }
 }`;
 
-const END_VOTING = gql`
-mutation EndVoting($gameId: String!) {
-  endVoting(gameId: $gameId) {
+const CALCULATE_SCORES = gql`
+mutation CalculateScores($gameId: String!) {
+  calculateScores(gameId: $gameId) {
+    name
+    roundTallies {
+      playerTallies {
+        player
+        points
+      }
+    }
+  }
+}`
+
+const START_NEW_ROUND = gql`
+mutation StartNewRound($gameId: String!) {
+  startNewRound(gameId: $gameId) {
     name
     state
   }
@@ -127,5 +140,6 @@ export {
   SUBMIT_ANSWER,
   START_VOTING,
   SUBMIT_VOTE,
-  END_VOTING,
+  CALCULATE_SCORES,
+  START_NEW_ROUND,
 };
