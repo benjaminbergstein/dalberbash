@@ -14,7 +14,7 @@ services:
   postgres:
     image: postgres
     volumes:
-      - data/postgresql/deploy:/var/lib/postgresql/data
+      - ./data/postgresql/deploy:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:
@@ -24,4 +24,10 @@ services:
     image: redis:latest
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
-      - ./data/redis/deploy:/data
+      - ./data/redis/${APP_ENV}:/data
+    networks:
+       - haproxy-controller_haproxy-controller
+
+networks:
+  haproxy-controller_haproxy-controller:
+    external: true
