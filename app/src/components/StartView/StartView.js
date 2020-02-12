@@ -14,8 +14,10 @@ import {
   fetchGames,
 } from '../../game';
 
-import { useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import {
+  GAME_LIST,
+  WATCH_GAME_LIST,
   FETCH_GAME,
   CREATE_GAME,
   JOIN_GAME,
@@ -98,7 +100,7 @@ const GameList = ({ games, onGameJoined }) => {
   return (
     <div>
       <TextBox theme='gray' text='Join a game' marginTop='0.5rem' />
-      {Object.entries(games).map(([name, game]) => (
+      {games.map(({ name, ...game }) => (
         <Button theme='gray' text={name} onClick={handleClick(name, game)} />
       ))}
     </div>
@@ -106,17 +108,17 @@ const GameList = ({ games, onGameJoined }) => {
 };
 
 const StartView = (props) => {
-  const [games, setGames] = useState({});
+  const { data, loading, subscribeToMore } = useQuery(GAME_LIST);
+  subscribeToMore({
+    document: WATCH_GAME_LIST,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (!subscriptionData.data) return prev;
+      const games = subscriptionData.data.games;
+      return { games };
+    }
+  })
+  const { games } = data || { games: [] };
   const anyGames = Object.keys(games).length !== 0;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchGames().then((res) => {
-        setGames(res);
-      });
-    }, 1000);
-    return () => { clearInterval(interval); };
-  });
 
   return (
     <Container

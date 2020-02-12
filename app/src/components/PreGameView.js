@@ -15,6 +15,7 @@ const PreGameView = ({
 }) => {
   const { game, subscribe } = useGame(gameId);
   subscribe();
+
   const {
     countPlayers,
     name,

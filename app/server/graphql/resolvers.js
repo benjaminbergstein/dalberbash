@@ -1,6 +1,7 @@
 const { PubSub } = require('apollo-server');
 
 const {
+  getGames,
   setGame,
   updateGame,
   getGameIds,
@@ -16,7 +17,7 @@ const gamePlayers = (gameId) => getPlayers(gameId)
     Object.entries(gamePlayers || {})
       .map(([player, name]) => ({ player, name })))
 
-const resolveGame = (gameId) => getGame(gameId).then(({ players, ...game }) => ({
+const resolveGame = (gameId, resolvedGame = undefined) => (resolvedGame || getGame(gameId)).then(({ players, ...game }) => ({
   countPlayers: players,
   name: gameId,
   ...game,
@@ -39,6 +40,16 @@ const NEW_GAME = {
 
 const pubsub = new PubSub();
 const GAME_UPDATED = 'GAME_UPDATED';
+const GAMES_LIST = 'GAMES_LIST';
+
+const resolveGameList = () => getGames()
+  .then((games) =>
+    Object.entries(games)
+      .filter(([name, { state }]) => state === 'waiting')
+  )
+  .then((games) => games.map(([name, game]) => resolveGame(name, Promise.resolve(game))));
+
+const publishGameList = () => resolveGameList().then((games) => pubsub.publish(GAMES_LIST, { games }));
 
 const publishGameUpdate = (gameId) => (returnValue) => {
   resolveGame(gameId).then((gameUpdated) => {
@@ -63,12 +74,7 @@ const setRoundState = (state) => (game) => {
 
 const resolvers = {
   Query: {
-    games: () => getGameIds().then((gameIds) =>
-      Promise.all(gameIds.map((gameId) => {
-        const [_, key] = gameId.split(':');
-        return resolveGame(key);
-      }))
-    ),
+    games: resolveGameList,
     game: (_, { gameId }) => resolveGame(gameId),
     gamePlayers: (_, { gameId }) => gamePlayers(gameId),
   },
@@ -77,6 +83,7 @@ const resolvers = {
     createGame: (_, { game }) => {
       const { name } = game;
       return new Promise((res, rej) => setGame(name, NEW_GAME)
+        .then(() => publishGameList())
         .then(() => res(resolveGame(name))));
     },
 
@@ -90,8 +97,12 @@ const resolvers = {
         },
       };
     })
-    .then(publishGameUpdate(gameId))
-    .then(() => resolveGame(gameId)),
+    .then(() => Promise.all([
+      publishGameList(),
+      publishGameUpdate(gameId)(),
+      resolveGame(gameId),
+    ]))
+    .then(([_, __, game]) => game),
 
     setPrompt: (_, { gameId, prompt }) => updateGame(gameId, (game) => {
       const { round } = prompt;
@@ -209,6 +220,10 @@ const resolvers = {
     gameUpdated: {
       subscribe: (_, { gameId }) => pubsub.asyncIterator(`${GAME_UPDATED}.${gameId}`),
     },
+
+    games: {
+      subscribe: (_, { gameId }) => pubsub.asyncIterator(GAMES_LIST),
+    }
   },
 };
 

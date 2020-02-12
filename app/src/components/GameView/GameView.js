@@ -25,7 +25,9 @@ const GameView = ({
   selectedPrompt,
   resetSelectedPrompt,
 }) => {
-  const { game } = useGame(gameId, true);
+  const { game, subscribe } = useGame(gameId);
+  subscribe();
+
   const { turnPlayer, round } = game;
   const { isMyTurn } = turnHelper(currentPlayer, game);
   const [Component, title] = ROUND_COMPONENTS[round.state];

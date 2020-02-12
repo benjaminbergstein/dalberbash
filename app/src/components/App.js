@@ -13,6 +13,7 @@ const COMPONENT_MAP = {
 const Game = ({ gameId, ...props }) => {
   const { game, loading, subscribe } = useGame(gameId);
   subscribe();
+  console.log("Update: ", game);
 
   if (loading) return null;
 

@@ -1,5 +1,19 @@
 import { gql } from 'apollo-boost';
 
+const GAME_LIST = gql`
+query GameList {
+  games {
+    name
+  }
+}`
+
+const WATCH_GAME_LIST = gql`
+subscription GameList {
+  games {
+    name
+  }
+}`
+
 const GAME_ATTRIBUTES = gql`
 fragment GameAttributes on Game {
   name
@@ -130,6 +144,8 @@ mutation StartNewRound($gameId: String!) {
 }`;
 
 export {
+  GAME_LIST,
+  WATCH_GAME_LIST,
   CREATE_GAME,
   FETCH_GAME,
   JOIN_GAME,
