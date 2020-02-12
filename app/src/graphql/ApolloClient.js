@@ -7,8 +7,8 @@ import { split } from 'apollo-link';
 import { getMainDefinition } from 'apollo-utilities';
 
 const HOST = process.env.REACT_APP_HOST;
-const WS_HOST = `${HOST.replace('3001', '3002').replace('http', 'ws')}/graphql`;
-const GRAPHQL_HOST = HOST.replace('3001', '3002');
+const GRAPHQL_HOST = `${HOST}/graphql`;
+const WS_HOST = `${GRAPHQL_HOST.replace('http', 'ws')}`;
 
 const httpLink = createHttpLink({ uri: GRAPHQL_HOST });
 

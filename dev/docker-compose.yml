@@ -12,20 +12,7 @@ services:
     environment:
       - REACT_APP_HOST=http://production.wips.link:3001
     depends_on:
-      - graphql
       - server
-
-  graphql:
-    image: ${DOCKER_IMAGE}
-    ports:
-      - 3002:4000
-    command: ["graphql"]
-    volumes:
-      - ./app:/app
-    networks:
-      - project
-    depends_on:
-      - redis
 
   server:
     image: ${DOCKER_IMAGE}

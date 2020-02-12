@@ -9,6 +9,7 @@
     "apollo-link-http": "^1.5.16",
     "apollo-link-ws": "^1.0.19",
     "apollo-server": "^2.9.16",
+    "apollo-server-express": "^2.10.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "deep-equal": "^1.1.1",
@@ -26,7 +27,6 @@
   "scripts": {
     "server": "nodemon ./server/index.js",
     "server:prod": "PORT=80 node ./server/index.js",
-    "graphql": "nodemon ./server/graphql-server.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
