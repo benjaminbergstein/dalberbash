@@ -30,9 +30,10 @@ const COLORS = {
   },
 }
 
-const Button = ({ theme, onClick, text }) => (
+const Button = ({ theme, onClick, text, disabled }) => (
   <div style={{ padding: '0.5rem 1rem 0' }}>
     <button
+      disabled={disabled}
       style={{
         boxSizing: 'border-box',
         display: 'block',

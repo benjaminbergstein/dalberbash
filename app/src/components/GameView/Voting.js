@@ -7,6 +7,27 @@ import { shuffle } from '../../utilities';
 import turnHelper from './turnHelper';
 import useGame from '../../hooks/useGame';
 
+const VoteOption = ({
+  currentPlayer,
+  vote,
+  player,
+  answer,
+  onClick,
+}) => {
+  const isCurrentPlayerAnswer = parseInt(player) === currentPlayer;
+  const theme = isCurrentPlayerAnswer ? 'lightgray' :
+    (vote === player ? 'green' : 'yellow');
+
+  return (
+    <Button
+      disabled={isCurrentPlayerAnswer}
+      theme={theme}
+      onClick={onClick}
+      text={`${answer}${isCurrentPlayerAnswer ? ' (your answer)' : ''}`}
+    />
+  );
+};
+
 const Voting = ({
   gameId,
   currentPlayer,
@@ -70,13 +91,15 @@ const Voting = ({
           <TextBox theme='gray' text={`Prompt: ${prompt}`} />
           <TextBox theme='gray' text='Which answer is real?' />
             {voteOptions.map(([player, answer]) => (
-              <Button
-                theme={vote === player ? 'green' : 'lightgray'}
+              <VoteOption
+                vote={vote}
+                player={player}
+                answer={answer}
+                currentPlayer={currentPlayer}
                 onClick={() => {
                   setError(false)
                   setVote(player)
                 }}
-                text={answer}
               />
             ))}
             {error !== false && (
