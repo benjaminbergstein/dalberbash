@@ -1,5 +1,8 @@
 const { getConnection } = require('./db');
 
+const connection = getConnection();
+console.log(getConnection);
+
 const {
   key,
   get,
@@ -7,7 +10,8 @@ const {
   addToSet,
   getSetMembers,
   getType,
-} = getConnection();
+  client,
+} = connection;
 
 const log = (data) => {
   console.log(data);
@@ -68,6 +72,7 @@ const getPlayers = (gameId) =>
   get(key('game', gameId, 'players')).then(deserialize).then(orEmptyHash)
 
 module.exports = {
+  client,
   setGame,
   updateGame,
   getGame,

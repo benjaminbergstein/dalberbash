@@ -40,7 +40,7 @@ const Scoring = ({
     ...names,
     [player]: name || `Player ${player}`,
   }), {});
-  const { answers, voteOptions, votes } = round;
+  const { prompt, answers, voteOptions, votes } = round;
 
   const [totals, points] = roundTallies.reduce(([aggregate, lastRound], { playerTallies }, index, tallies) => {
     return [playerTallies.reduce((t2, { player, points }) => {
@@ -80,12 +80,17 @@ const Scoring = ({
   console.log(totals, points);
   const getPlayerName = (player) => playerNames[player] || `Player ${player}`;
 
+  const getPlayerAnswer = (desiredPlayer) =>
+    answers.find(({ player }) => player == desiredPlayer).answer;
+
   return (
     <>
+      <TextBox theme='gray' text={`Prompt: ${prompt}`} />
       {playerOrder.map((player) => (
         <div>
           <TextBox theme='green' marginTop='0.5rem' text={`${getPlayerName(player)}`} />
           <TextBox theme='gray' text={`${totals[player]} pts total, ${points[player]} this round.`} />
+          <TextBox theme='gray' text={`Answer: ${getPlayerAnswer(player)}`} />
         </div>
       ))}
 

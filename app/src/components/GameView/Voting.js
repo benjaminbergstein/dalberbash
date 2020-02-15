@@ -17,7 +17,7 @@ const Voting = ({
   const { WhenMyTurn, WhenNotMyTurn } = turnHelper(currentPlayer, game);
 
   const { round, countPlayers } = game;
-  const { answers, votes } = round;
+  const { prompt, answers, votes } = round;
 
   const [error, setError] = useState(false);
   const [vote, setVote] = useState(-1);
@@ -67,6 +67,7 @@ const Voting = ({
         )}
         {!voteSubmitted && (
           <div>
+          <TextBox theme='gray' text={`Prompt: ${prompt}`} />
           <TextBox theme='gray' text='Which answer is real?' />
             {voteOptions.map(([player, answer]) => (
               <Button

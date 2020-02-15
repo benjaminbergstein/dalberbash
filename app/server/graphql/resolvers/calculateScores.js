@@ -1,28 +1,30 @@
-const {
-  updateGame,
-  getGame,
-} = require('../../db/game.js');
+const i = (n) => parseInt(n);
 
-const calculateScores = (gameId) => {
+const calculateScores = (
+  gameId,
+  getGame,
+  updateGame
+) => {
   return getGame(gameId).then((game) => {
     const {
-      name,
       round,
       players,
       turnPlayer,
       roundTallies,
-      playerNames,
     } = game;
     const { answers, votes } = round;
 
-    const didPlayerChoseCorrectly = (player) => isPlayerTurnPlayer(votes[player]) === turnPlayer;
-
-    const isPlayerTurnPlayer= (player) => parseInt(player) === turnPlayer;
+    const isPlayerTurnPlayer= (player) => i(player) === i(turnPlayer);
+    const didPlayerChoseCorrectly = (player) => isPlayerTurnPlayer(votes[player]);
 
     const getVoteCountForPlayer = (player) => {
-      return Object.values(votes).reduce((count, answerNumber) => {
-        return player === answerNumber ? count + 1 : count;
-      }, 0);
+      return Object.entries(votes).reduce(
+        (count, [voter, answerNumber]) =>
+          i(voter) !== i(player) &&
+          i(player) === i(answerNumber) ?
+          count + 1 : count,
+        0
+      );
     };
 
     const getPointsForPlayer = (player) => {

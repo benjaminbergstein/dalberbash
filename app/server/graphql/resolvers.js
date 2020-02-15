@@ -139,7 +139,11 @@ const resolvers = {
         }))
     }),
 
-    calculateScores: (_, { gameId }) => calculateScores(gameId)
+    calculateScores: (_, { gameId }) => calculateScores(
+      gameId,
+      getGame,
+      updateGame,
+    )
     .then(publishGameUpdate(gameId))
     .then(() => resolveGame(gameId)),
 
