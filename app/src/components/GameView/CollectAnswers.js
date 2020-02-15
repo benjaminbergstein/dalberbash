@@ -13,7 +13,7 @@ const AnswerSubmitted = ({ currentPlayer, gameId }) => {
 
   const { WhenMyTurn, WhenNotMyTurn } = turnHelper(currentPlayer, game);
   const { round, countPlayers } = game;
-  const { prompt, answers } = round;
+  const { prompt, answers, answerOrder } = round;
   const answerCount = answers.length;
   const everyoneAnswered = answerCount === countPlayers;
 
@@ -21,14 +21,22 @@ const AnswerSubmitted = ({ currentPlayer, gameId }) => {
     variables: { gameId },
   });
 
+  const orderedAnswers = answerOrder.map((answerer) =>
+    (answers || {}).find(({ player }) => answerer === parseInt(player)) || { answer: "(no answer yet)" });
+
   return <>
     <WhenMyTurn>
-      <TextBox theme='gray' text={`${answerCount} answer(s)`} />
-      {answers.map(({ answer }) => (
-        <TextBox theme='green' text={answer} />
+      {everyoneAnswered && (
+        <TextBox theme='yellow' text='Everyone has voted. Now, read each option aloud to the group.' />
+      )}
+      {!everyoneAnswered && (
+        <TextBox theme='gray' text={`${answerCount} player(s) have answered`} />
+      )}
+      {orderedAnswers.map(({ answer }, i) => (
+        <TextBox theme='green' text={`${i+1}: ${answer}`} />
       ))}
       {everyoneAnswered && (
-        <Button onClick={startVoting} text='Start Voting' />
+        <Button onClick={startVoting} text='Proceed to Vote' />
       )}
     </WhenMyTurn>
 

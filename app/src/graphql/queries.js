@@ -31,6 +31,7 @@ fragment GameAttributes on Game {
       player
       answer
     }
+    answerOrder
   }
   roundTallies {
     playerTallies {

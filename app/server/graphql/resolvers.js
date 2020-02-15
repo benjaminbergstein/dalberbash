@@ -1,5 +1,4 @@
 const { PubSub } = require('apollo-server');
-
 const {
   getGames,
   setGame,
@@ -28,6 +27,7 @@ const NEW_ROUND = {
   answers: {},
   state: 'awaiting_prompt',
   prompt: undefined,
+  answerOrder: [],
 };
 
 const NEW_GAME = {
@@ -41,6 +41,15 @@ const NEW_GAME = {
 const pubsub = new PubSub();
 const GAME_UPDATED = 'GAME_UPDATED';
 const GAMES_LIST = 'GAMES_LIST';
+
+const shuffle = (a) => {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+
 
 const resolveGameList = () => getGames()
   .then((games) =>
@@ -72,6 +81,10 @@ const setRoundState = (state) => (game) => {
   };
 };
 
+const generateAnswerOrder = (playerCount) => {
+  return shuffle(new Array(playerCount).fill(1) .map((_, i) => i + 1))
+};
+
 const resolvers = {
   Query: {
     games: resolveGameList,
@@ -94,6 +107,7 @@ const resolvers = {
         round: {
           state: "awaiting_prompt",
           answers: {},
+          answerOrder: generateAnswerOrder(game.players),
         },
       };
     })
@@ -105,10 +119,11 @@ const resolvers = {
     .then(([_, __, game]) => game),
 
     setPrompt: (_, { gameId, prompt }) => updateGame(gameId, (game) => {
-      const { round } = prompt;
+      const { round } = game;
       return {
         ...game,
         round: {
+          ...round,
           prompt,
           state: 'awaiting_answers',
         },
@@ -179,7 +194,10 @@ const resolvers = {
       return {
         ...game,
         turnPlayer: (turnPlayer % countPlayers) + 1,
-        round: NEW_ROUND,
+        round: {
+          ...NEW_ROUND,
+          answerOrder: generateAnswerOrder(countPlayers),
+        },
       };
     })
     .then(publishGameUpdate(gameId))

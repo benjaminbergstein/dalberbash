@@ -6,8 +6,26 @@ import { SUBMIT_VOTE, CALCULATE_SCORES } from '../../graphql/queries';
 import { shuffle } from '../../utilities';
 import turnHelper from './turnHelper';
 import useGame from '../../hooks/useGame';
+import stopWords from './stopWords.json';
+
+const STOP_WORDS = stopWords;
+
+const hintFor = (answer) => {
+  const words = answer.toLowerCase()
+    .replace(/[^a-z ]/g, '')
+    .split(' ');
+
+  const longestWords = words
+    .filter((word) => STOP_WORDS.indexOf(word) === -1)
+    .sort((a, b) => b.length - a.length)
+    .slice(0, 5);
+
+  return words.filter((word) =>
+    longestWords.indexOf(word) !== -1).join(', ');
+};
 
 const VoteOption = ({
+  answerNumber,
   currentPlayer,
   vote,
   player,
@@ -18,12 +36,13 @@ const VoteOption = ({
   const theme = isCurrentPlayerAnswer ? 'lightgray' :
     (vote === player ? 'green' : 'yellow');
 
+  const answerHint = hintFor(answer);
   return (
     <Button
       disabled={isCurrentPlayerAnswer}
       theme={theme}
       onClick={onClick}
-      text={`${answer}${isCurrentPlayerAnswer ? ' (your answer)' : ''}`}
+      text={`${answerNumber + 1}: ${answerHint}${isCurrentPlayerAnswer ? ' (your answer)' : ''}`}
     />
   );
 };
@@ -38,7 +57,9 @@ const Voting = ({
   const { WhenMyTurn, WhenNotMyTurn } = turnHelper(currentPlayer, game);
 
   const { round, countPlayers } = game;
-  const { prompt, answers, votes } = round;
+  const { prompt, answers, votes, answerOrder } = round;
+  const orderedAnswers = answerOrder.map((answerer) =>
+    (answers || {}).find(({ player }) => answerer === parseInt(player)));
 
   const [error, setError] = useState(false);
   const [vote, setVote] = useState(-1);
@@ -90,8 +111,9 @@ const Voting = ({
           <div>
           <TextBox theme='gray' text={`Prompt: ${prompt}`} />
           <TextBox theme='gray' text='Which answer is real?' />
-            {voteOptions.map(([player, answer]) => (
+            {orderedAnswers.map(({ player, answer }, i) => (
               <VoteOption
+                answerNumber={i}
                 vote={vote}
                 player={player}
                 answer={answer}

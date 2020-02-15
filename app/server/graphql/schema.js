@@ -17,6 +17,7 @@ const typeDefs = gql`
     answers: [Answer]!
     voteOptions: [VoteOption]!
     votes: [Vote]!
+    answerOrder: [Int]!
   }
 
   type VoteOption {
