@@ -122,58 +122,6 @@ const CollectAnswers = ({
       onSubmit={() => setHasCurrentPlayerAnswered(true)}
     />;
   }
-
-  // return (
-  //   <>
-  //     <WhenMyTurn>
-  //       {!hasCurrentPlayerAnswered && (
-  //         <CollectionForm
-  //           prompt={prompt}
-  //           prompt="What's the real answer?"
-  //           handleSubmit={() => {
-  //             submitAnswer({
-  //               variables: {
-  //                 gameId,
-  //                 answerInput: {
-  //                   player: currentPlayer,
-  //                   answer: answer.current,
-  //                 },
-  //               },
-  //             });
-  //           }}
-  //           field={answer.current}
-  //           setField={setAnswer}
-  //         />
-  //       )}
-  //       {hasCurrentPlayerAnswered && (
-  //         <>
-  //           <TextBox theme='gray' text={`${answerCount} answer(s)`} />
-  //           {answers.map(({ answer }) => (
-  //             <TextBox theme='green' text={answer} />
-  //           ))}
-  //           {everyoneAnswered && (
-  //             <Button onClick={startVoting} text='Start Voting' />
-  //           )}
-  //         </>
-  //       )}
-  //     </WhenMyTurn>
-
-  //     <WhenNotMyTurn>
-  //       <TextBox theme='gray' text={`The prompt is: "${prompt}"`} />
-  //       {!hasCurrentPlayerAnswered && (
-  //         <CollectionForm
-  //           prompt="What's your answer?"
-  //           handleSubmit={submitAnswer}
-  //           field={answer.current}
-  //           setField={setAnswer}
-  //         />
-  //       )}
-  //       {hasCurrentPlayerAnswered && (
-  //         <TextBox theme='green' text='Waiting for other players...' />
-  //       )}
-  //     </WhenNotMyTurn>
-  //   </>
-  // );
 };
 
 export default CollectAnswers;
