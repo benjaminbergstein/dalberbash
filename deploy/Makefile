@@ -6,6 +6,10 @@ include ${BASE_DIR}/shared.mk
 
 .PHONY: deploy
 
+release:
+	${MAKE} -C ../docker
+	${MAKE} undeploy deploy
+
 deploy: start build
 
 start:
