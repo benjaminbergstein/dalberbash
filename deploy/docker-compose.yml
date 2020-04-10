@@ -6,6 +6,7 @@ services:
     command: ["server:prod"]
     environment:
       - REACT_APP_HOST
+      - REDIS_HOST=redis
     depends_on:
        - redis
     networks:

@@ -4,9 +4,9 @@ const { promisify } = require('util');
 const key = (...parts) => parts.join(':');
 
 const p = (tgt, method) => promisify(tgt[method]).bind(tgt);
-
+const redisHost = process.env.REDIS_HOST || 'localhost';
 const getConnection = () => {
-  const client = redis.createClient(6379, 'redis');
+  const client = redis.createClient(6379, redisHost);
   const get = p(client, 'get');
   const set = p(client, 'set');
   const flushdb = p(client, 'flushdb');
