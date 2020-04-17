@@ -16,6 +16,7 @@ const mountApp = (initialGame) => {
       <App
         initialGameId={initialGameId}
         initialCurrentPlayer={parseInt(initialCurrentPlayer)}
+        shouldJoin={initialCurrentPlayer === 'join'}
       />
     </ApolloProvider>
   );

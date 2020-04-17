@@ -78,8 +78,27 @@ const CreateGame = ({ game, onGameJoined }) => {
   )
 };
 
-const GameList = ({ games, onGameJoined }) => {
+const GameList = ({ gameId: joinGameId, games, onGameJoined }) => {
   const [joinGame, { data, called, loading }] = useMutation(JOIN_GAME);
+
+  const isAcceptingInvitation = !!joinGameId
+  const acceptInvite = () => {
+    joinGame({
+      variables: {
+        gameId: joinGameId,
+      },
+      update: (cache, { data }) => {
+        const { joinGame } = data;
+        const { player } = joinGame;
+        onGameJoined({
+          isCreator: false,
+          gameId: joinGameId,
+          player,
+        });
+      },
+    });
+  }
+
   const handleClick = (name, game) => () => {
     joinGame({
       variables: {
@@ -99,6 +118,10 @@ const GameList = ({ games, onGameJoined }) => {
 
   return (
     <div>
+      {isAcceptingInvitation && <>
+        <TextBox theme='green' text={`You have been invited to game "${joinGameId}"`} marginTop='0.5rem' />
+        <Button theme='green' text='Accept' onClick={acceptInvite} />
+      </>}
       <TextBox theme='gray' text='Join a game' marginTop='0.5rem' />
       {games.map(({ name, ...game }) => (
         <Button theme='gray' text={name} onClick={handleClick(name, game)} />

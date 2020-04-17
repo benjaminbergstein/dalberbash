@@ -54,12 +54,15 @@ const PreGameView = ({
   const playerNameValues = Object.values(playerNames || {});
   const unnamedPlayers = players - playerNameValues.length;
 
+  const inviteLink = new URL(window.location.href)
+  inviteLink.hash = `${name}.join`
   return (
     <Container
       title={`Game "${name}"`}
       subtitle={'Waiting for players to join'}
     >
       <TextBox theme='blue' text={`${countPlayers} player(s) currently joined`} />
+      <TextBox theme='gray' text={`Invite your friends: ${inviteLink}`} />
       {playerNameValues.map((playerName) => (
         <TextBox theme='gray' text={playerName} />
       ))}

@@ -22,21 +22,23 @@ const Game = ({ gameId, ...props }) => {
   return <GameComponent gameId={gameId} {...props} />
 };
 
-const App = ({ initialGameId, initialCurrentPlayer, trackEvent }) => {
+const App = ({ initialGameId, shouldJoin, initialCurrentPlayer, trackEvent }) => {
   const [gameId, setGameId] = useState(initialGameId);
   const [currentPlayer, setCurrentPlayer] = useState(initialCurrentPlayer)
+  const [hasJoined, setHasJoined] = useState(false)
 
   const onGameJoined = ({ isCreator, gameId, player }) => {
     setGameId(gameId);
     setCurrentPlayer(player);
+    setHasJoined(true)
     window.location.hash = `${gameId}.${player}`;
     trackEvent('Game', isCreator ? 'Create' : 'Join');
   };
 
-  if (gameId) {
+  if (gameId && !(shouldJoin && hasJoined === false)) {
     return <Game gameId={gameId} currentPlayer={currentPlayer} />;
   } else {
-    return <StartView onGameJoined={onGameJoined} />;
+    return <StartView gameId={gameId} onGameJoined={onGameJoined} />;
   }
 };
 
