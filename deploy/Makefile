@@ -15,6 +15,9 @@ deploy: start build
 start:
 	${COMPOSE_CMD} up -d app
 
+cert:
+	${COMPOSE_CMD} run --rm https
+
 build:
 	${COMPOSE_CMD} exec app yarn build
 

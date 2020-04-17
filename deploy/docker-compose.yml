@@ -11,6 +11,14 @@ services:
     networks:
        - haproxy-controller_haproxy-controller
 
+  https:
+    image: certbot/certbot:latest
+    command: ["certonly", "-d", "dalberbash.com", "-d", "www.dalberbash.com", "--standalone", "--debug-challenges", "--agree-tos"]
+    volumes:
+      - ${DATA_DIR:-./data}/letsencrypt:/etc/letsencrypt
+    networks:
+       - haproxy-controller_haproxy-controller
+
   postgres:
     image: postgres
     volumes:
