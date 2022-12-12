@@ -13,7 +13,7 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "deep-equal": "^1.1.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "graphql": "^14.6.0",
     "isomorphic-fetch": "^2.2.1",
     "nodemon": "^2.0.1",
